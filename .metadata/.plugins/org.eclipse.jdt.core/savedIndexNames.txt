@@ -1,0 +1,4 @@
+INDEX VERSION 1.129+E:\Workspace\java\rss-dashboard\.metadata\.plugins\org.eclipse.jdt.core
+2515973775.index
+712446760.index
+3076440715.index
