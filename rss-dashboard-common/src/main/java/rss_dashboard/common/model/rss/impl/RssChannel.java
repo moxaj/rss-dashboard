@@ -1,4 +1,4 @@
-package rss_dashboard.common.model.impl;
+package rss_dashboard.common.model.rss.impl;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.Builder;
 import lombok.Getter;
-import rss_dashboard.common.model.IRssChannel;
+import rss_dashboard.common.model.rss.IRssChannel;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -17,9 +17,9 @@ public class RssChannel extends RssElement implements IRssChannel {
 	private final String language;
 
 	@Builder
-	private RssChannel(String title, String link, String description, List<String> categories, String pubDate,
-			byte[] image, String language) {
-		super(title, link, description, categories, pubDate, image);
+	private RssChannel(String id, String title, String link, String description, List<String> categories,
+			String pubDate, byte[] image, String language) {
+		super(id, title, link, description, categories, pubDate, image);
 		this.language = language;
 	}
 }

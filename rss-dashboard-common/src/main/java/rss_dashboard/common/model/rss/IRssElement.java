@@ -1,8 +1,10 @@
-package rss_dashboard.common.model;
+package rss_dashboard.common.model.rss;
 
 import java.util.List;
 
 public interface IRssElement {
+	String getId();
+	
 	String getTitle();
 
 	String getLink();

@@ -1,4 +1,4 @@
-package rss_dashboard.common.model.impl;
+package rss_dashboard.common.model.rss.impl;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import lombok.Builder;
 import lombok.Getter;
-import rss_dashboard.common.model.IRssItem;
+import rss_dashboard.common.model.rss.IRssItem;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
@@ -17,9 +17,9 @@ public class RssItem extends RssElement implements IRssItem {
 	private final String author;
 
 	@Builder
-	public RssItem(String title, String link, String description, List<String> categories, String pubDate, byte[] image,
-			String author) {
-		super(title, link, description, categories, pubDate, image);
+	public RssItem(String id, String title, String link, String description, List<String> categories, String pubDate,
+			byte[] image, String author) {
+		super(id, title, link, description, categories, pubDate, image);
 		this.author = author;
 	}
 }
