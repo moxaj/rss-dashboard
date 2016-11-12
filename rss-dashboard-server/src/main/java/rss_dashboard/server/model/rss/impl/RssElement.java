@@ -1,4 +1,5 @@
-package rss_dashboard.common.model.rss.impl;
+package rss_dashboard.server.model.rss.impl;
+
 
 import java.util.List;
 

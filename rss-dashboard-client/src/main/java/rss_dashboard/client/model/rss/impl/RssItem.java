@@ -1,19 +1,16 @@
-package rss_dashboard.common.model.rss.impl;
+package rss_dashboard.client.model.rss.impl;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.google.api.client.util.Key;
 
 import lombok.Builder;
 import lombok.Getter;
 import rss_dashboard.common.model.rss.IRssItem;
 
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.PROPERTY)
 @Getter
 public class RssItem extends RssElement implements IRssItem {
+	@Key
 	private final String author;
 
 	@Builder
