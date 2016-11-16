@@ -1,7 +1,7 @@
 # REST interface
 
-Url | Method | Request/Response | Description
---- | --- | --- | ---
+Url | Method | Request/Response
+--- | --- | ---
 /login | GET | ILogin\*
 /keepalive | GET | IKeepAlive\*
 /channels | GET | IRssChannel\*
