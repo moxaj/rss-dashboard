@@ -19,7 +19,7 @@ public class DashboardModificationRequest extends AuthenticatedRequest implement
 	private final String feedUrl;
 
 	@Builder
-	public DashboardModificationRequest(String token, int pageId, int rowId, int columnId, String feedUrl) {
+	private DashboardModificationRequest(String token, int pageId, int rowId, int columnId, String feedUrl) {
 		super(token);
 		this.pageId = pageId;
 		this.rowId = rowId;

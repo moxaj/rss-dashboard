@@ -15,7 +15,7 @@ public class RssItemRequest extends AuthenticatedRequest implements IRssItemRequ
 	private final List<String> ids;
 
 	@Builder
-	public RssItemRequest(String token, List<String> ids) {
+	private RssItemRequest(String token, List<String> ids) {
 		super(token);
 		this.ids = ids;
 	}

@@ -8,7 +8,7 @@ import rss_dashboard.common.network.dashboard.IDashboardLayoutRequest;
 @Getter
 public class DashboardLayoutRequest extends AuthenticatedRequest implements IDashboardLayoutRequest {
 	@Builder
-	public DashboardLayoutRequest(String token) {
+	private DashboardLayoutRequest(String token) {
 		super(token);
 	}
 }

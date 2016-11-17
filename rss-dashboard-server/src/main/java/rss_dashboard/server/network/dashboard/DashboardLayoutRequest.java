@@ -14,7 +14,7 @@ import rss_dashboard.server.network.AuthenticatedRequest;
 @Getter
 public class DashboardLayoutRequest extends AuthenticatedRequest implements IDashboardLayoutRequest {
 	@Builder
-	public DashboardLayoutRequest(String token) {
+	private DashboardLayoutRequest(String token) {
 		super(token);
 	}
 }

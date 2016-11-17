@@ -17,7 +17,7 @@ public class RssItem extends RssElement implements IRssItem {
 	private final String author;
 
 	@Builder
-	public RssItem(String id, String title, String link, String description, List<String> categories, String pubDate,
+	private RssItem(String id, String title, String link, String description, List<String> categories, String pubDate,
 			String author) {
 		super(id, title, link, description, categories, pubDate);
 		this.author = author;

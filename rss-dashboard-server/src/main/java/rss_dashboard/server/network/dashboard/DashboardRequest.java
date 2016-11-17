@@ -17,7 +17,7 @@ public class DashboardRequest extends AuthenticatedRequest implements IDashboard
 	private final IDashboardFilter filter;
 
 	@Builder
-	public DashboardRequest(String token, IDashboardFilter filter) {
+	private DashboardRequest(String token, IDashboardFilter filter) {
 		super(token);
 		this.filter = filter;
 	}

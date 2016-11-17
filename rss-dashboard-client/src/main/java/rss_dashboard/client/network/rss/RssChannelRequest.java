@@ -15,7 +15,7 @@ public class RssChannelRequest extends AuthenticatedRequest implements IRssItemR
 	private final List<String> ids;
 
 	@Builder
-	public RssChannelRequest(String token, List<String> ids) {
+	private RssChannelRequest(String token, List<String> ids) {
 		super(token);
 		this.ids = ids;
 	}

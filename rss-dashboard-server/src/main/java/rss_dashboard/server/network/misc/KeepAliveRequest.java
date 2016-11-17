@@ -14,7 +14,7 @@ import rss_dashboard.server.network.AuthenticatedRequest;
 @Getter
 public class KeepAliveRequest extends AuthenticatedRequest implements IKeepAliveRequest {
 	@Builder
-	public KeepAliveRequest(String token) {
+	private KeepAliveRequest(String token) {
 		super(token);
 	}
 }

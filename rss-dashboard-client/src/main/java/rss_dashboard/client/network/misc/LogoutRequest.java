@@ -1,9 +1,9 @@
-package rss_dashboard.server.network.misc;
+package rss_dashboard.client.network.misc;
 
 import lombok.Builder;
 import lombok.Getter;
+import rss_dashboard.client.network.AuthenticatedRequest;
 import rss_dashboard.common.network.misc.ILogoutRequest;
-import rss_dashboard.server.network.AuthenticatedRequest;
 
 @Getter
 public class LogoutRequest extends AuthenticatedRequest implements ILogoutRequest {
