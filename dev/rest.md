@@ -8,7 +8,7 @@ Url | Method | Request/Response
 /channels | GET | IRssChannel\*
 /items | GET | IRssItem\*
 /layout | GET | IDashboardLayout\*
-/layout | POST | IDashboardModification\*
+/layout | POST / DELETE | IDashboardModification\*
 /dashboard | GET | IDashboard\*
 
 
