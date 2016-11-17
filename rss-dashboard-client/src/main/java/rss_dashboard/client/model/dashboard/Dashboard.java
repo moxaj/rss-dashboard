@@ -1,4 +1,4 @@
-package rss_dashboard.client.model.dashboard.impl;
+package rss_dashboard.client.model.dashboard;
 
 import java.util.List;
 import java.util.Map;

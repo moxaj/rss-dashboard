@@ -1,4 +1,4 @@
-package rss_dashboard.server.model.rss.impl;
+package rss_dashboard.server.model.rss;
 
 import java.util.List;
 
@@ -18,8 +18,8 @@ public class RssItem extends RssElement implements IRssItem {
 
 	@Builder
 	public RssItem(String id, String title, String link, String description, List<String> categories, String pubDate,
-			byte[] image, String author) {
-		super(id, title, link, description, categories, pubDate, image);
+			String author) {
+		super(id, title, link, description, categories, pubDate);
 		this.author = author;
 	}
 }

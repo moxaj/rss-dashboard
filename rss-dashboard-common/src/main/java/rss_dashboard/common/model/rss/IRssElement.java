@@ -14,6 +14,4 @@ public interface IRssElement {
 	List<String> getCategories();
 
 	String getPubDate();
-	
-	byte[] getImage();
 }
