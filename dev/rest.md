@@ -2,14 +2,14 @@
 
 Url | Method | Request/Response
 --- | --- | ---
-/login | GET | ILogin\*
-/logout | GET | ILogout\*
-/keepalive | GET | IKeepAlive\*
-/channels | GET | IRssChannel\*
-/items | GET | IRssItem\*
-/layout | GET | IDashboardLayout\*
-/layout | POST / DELETE | IDashboardModification\*
-/dashboard | GET | IDashboard\*
+/misc/login | POST | ILogin\*
+/misc/logout | POST | ILogout\*
+/misc/keepalive | POST | IKeepAlive\*
+/rss/channels | GET | IRssChannel\*
+/rss/items | GET | IRssItem\*
+/dashboard/layout | GET | IDashboardLayout\*
+/dashboard/layout | POST / DELETE | IDashboardModification\*
+/dashboard/dashboard | GET | IDashboard\*
 
 
 
