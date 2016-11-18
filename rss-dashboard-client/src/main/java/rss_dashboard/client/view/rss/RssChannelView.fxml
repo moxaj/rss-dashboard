@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+	minWidth="-Infinity" prefHeight="288.0" prefWidth="482.0"
+	xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="rss_dashboard.client.view.rss.RssChannelViewController">
+	<children>
+		<HBox prefHeight="86.0">
+			<children>
+				<ImageView fx:id="image" fitHeight="96.0" fitWidth="96.0"
+					pickOnBounds="true" preserveRatio="true" />
+				<VBox alignment="CENTER_LEFT" prefHeight="96.0" prefWidth="276.0"
+					spacing="10.0">
+					<children>
+						<Hyperlink fx:id="titleLabel" text="Hyperlink" />
+						<Label fx:id="descriptionLabel" text="Label" />
+						<Label fx:id="categoriesLabel" text="Label" />
+					</children>
+				</VBox>
+				<VBox alignment="TOP_RIGHT" prefHeight="96.0" prefWidth="103.0"
+					HBox.hgrow="ALWAYS">
+					<children>
+						<Label fx:id="pubDateLabel" text="Label" />
+					</children>
+					<padding>
+						<Insets right="10.0" top="10.0" />
+					</padding>
+				</VBox>
+			</children>
+		</HBox>
+		<ListView fx:id="itemListView" prefWidth="482.0" />
+	</children>
+</VBox>

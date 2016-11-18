@@ -10,7 +10,6 @@ import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.http.json.JsonHttpContent;
@@ -30,6 +29,7 @@ import rss_dashboard.client.network.misc.KeepAliveResponse;
 import rss_dashboard.client.network.misc.LoginRequest;
 import rss_dashboard.client.network.misc.LoginResponse;
 import rss_dashboard.client.network.misc.LogoutRequest;
+import rss_dashboard.client.network.misc.LogoutResponse;
 import rss_dashboard.client.network.rss.RssChannelRequest;
 import rss_dashboard.client.network.rss.RssChannelResponse;
 import rss_dashboard.client.network.rss.RssItemRequest;
@@ -39,19 +39,13 @@ import rss_dashboard.common.model.dashboard.IDashboardLayout;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssItem;
 import rss_dashboard.common.network.dashboard.IDashboardLayoutRequest;
-import rss_dashboard.common.network.dashboard.IDashboardLayoutResponse;
 import rss_dashboard.common.network.dashboard.IDashboardModificationRequest;
 import rss_dashboard.common.network.dashboard.IDashboardRequest;
-import rss_dashboard.common.network.dashboard.IDashboardResponse;
 import rss_dashboard.common.network.misc.IKeepAliveRequest;
-import rss_dashboard.common.network.misc.IKeepAliveResponse;
 import rss_dashboard.common.network.misc.ILoginRequest;
-import rss_dashboard.common.network.misc.ILoginResponse;
 import rss_dashboard.common.network.misc.ILogoutRequest;
 import rss_dashboard.common.network.rss.IRssChannelRequest;
-import rss_dashboard.common.network.rss.IRssChannelResponse;
 import rss_dashboard.common.network.rss.IRssItemRequest;
-import rss_dashboard.common.network.rss.IRssItemResponse;
 
 public class NetworkClient implements INetworkClient {
 	private static final JsonFactory JSON_FACTORY;
@@ -89,97 +83,89 @@ public class NetworkClient implements INetworkClient {
 	@Override
 	public String login(String username, String password) throws IOException {
 		ILoginRequest request = LoginRequest.builder().username(username).password(password).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"POST", loginUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		ILoginResponse response = httpResponse.parseAs(LoginResponse.class);
-		httpResponse.disconnect();
-		return response.getToken();
+		return HTTP_REQUEST_FACTORY
+				.buildRequest("POST", loginUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(LoginResponse.class)
+				.getToken();
 	}
 
 	@Override
 	public void logout(String token) throws IOException {
 		ILogoutRequest request = LogoutRequest.builder().token(token).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"POST", logoutUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		httpResponse.disconnect();
+		HTTP_REQUEST_FACTORY
+				.buildRequest("POST", logoutUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(LogoutResponse.class);
 	}
 
 	@Override
-	public boolean keepAlive(String token) throws IOException {
+	public boolean doKeepAlive(String token) throws IOException {
 		IKeepAliveRequest request = KeepAliveRequest.builder().token(token).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"POST", keepAliveUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		IKeepAliveResponse response = httpResponse.parseAs(KeepAliveResponse.class);
-		httpResponse.disconnect();
-		return response.isAlive();
+		return HTTP_REQUEST_FACTORY
+				.buildRequest("POST", keepAliveUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(KeepAliveResponse.class)
+				.isAlive();
 	}
 
 	@Override
 	public Map<String, IRssChannel> getRssChannels(String token, List<String> ids) throws IOException {
 		IRssChannelRequest request = RssChannelRequest.builder().token(token).ids(ids).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"GET", rssChannelUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		IRssChannelResponse response = httpResponse.parseAs(RssChannelResponse.class);
-		httpResponse.disconnect();
-		return response.getChannels();
+		return HTTP_REQUEST_FACTORY
+				.buildRequest("GET", rssChannelUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(RssChannelResponse.class)
+				.getChannels();
 	}
 
 	@Override
 	public Map<String, IRssItem> getRssItems(String token, List<String> ids) throws IOException {
 		IRssItemRequest request = RssItemRequest.builder().token(token).ids(ids).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"GET", rssItemUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		IRssItemResponse response = httpResponse.parseAs(RssItemResponse.class);
-		httpResponse.disconnect();
-		return response.getItems();
+		return HTTP_REQUEST_FACTORY
+				.buildRequest("GET", rssItemUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(RssItemResponse.class)
+				.getItems();
 	}
 
 	@Override
 	public IDashboard getDashboard(String token) throws IOException {
 		IDashboardRequest request = DashboardRequest.builder().token(token).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"GET", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		IDashboardResponse response = httpResponse.parseAs(DashboardResponse.class);
-		httpResponse.disconnect();
-		return response.getDashboard();
+		return HTTP_REQUEST_FACTORY
+				.buildRequest("GET", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(DashboardResponse.class)
+				.getDashboard();
 	}
 
 	@Override
 	public IDashboardLayout getDashboardLayout(String token) throws IOException {
 		IDashboardLayoutRequest request = DashboardLayoutRequest.builder().token(token).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"GET", dashboardLayoutUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		IDashboardLayoutResponse response = httpResponse.parseAs(DashboardLayoutResponse.class);
-		httpResponse.disconnect();
-		return response.getLayout();
+		return HTTP_REQUEST_FACTORY
+				.buildRequest("GET", dashboardLayoutUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(DashboardLayoutResponse.class)
+				.getLayout();
 	}
 
 	@Override
 	public void addFeedUrl(String token, int pageId, int rowId, int columnId, String feedUrl) throws IOException {
 		IDashboardModificationRequest request = DashboardModificationRequest.builder()
 				.pageId(pageId).rowId(rowId).columnId(columnId).feedUrl(feedUrl).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"POST", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		httpResponse.parseAs(DashboardModificationResponse.class);
-		httpResponse.disconnect();
+		HTTP_REQUEST_FACTORY
+				.buildRequest("POST", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(DashboardModificationResponse.class);
 	}
 
 	@Override
 	public void removeFeedUrl(String token, int pageId, int rowId, int columnId) throws IOException {
 		IDashboardModificationRequest request = DashboardModificationRequest.builder()
 				.pageId(pageId).rowId(rowId).columnId(columnId).feedUrl(null).build();
-		HttpRequest httpRequest = HTTP_REQUEST_FACTORY.buildRequest(
-				"DELETE", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request));
-		HttpResponse httpResponse = httpRequest.execute();
-		httpResponse.parseAs(DashboardModificationResponse.class);
-		httpResponse.disconnect();
+		HTTP_REQUEST_FACTORY
+				.buildRequest("DELETE", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.execute()
+				.parseAs(DashboardModificationResponse.class);
 	}
 }
