@@ -7,10 +7,10 @@ import com.google.api.client.util.Key;
 import lombok.Builder;
 import lombok.Getter;
 import rss_dashboard.client.network.AuthenticatedRequest;
-import rss_dashboard.common.network.rss.IRssItemRequest;
+import rss_dashboard.common.network.rss.IRssChannelRequest;
 
 @Getter
-public class RssChannelRequest extends AuthenticatedRequest implements IRssItemRequest {
+public class RssChannelRequest extends AuthenticatedRequest implements IRssChannelRequest {
 	@Key
 	private final List<String> ids;
 
