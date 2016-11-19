@@ -4,50 +4,27 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
+import com.google.api.client.http.EmptyContent;
 import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpContent;
-import com.google.api.client.http.HttpMediaType;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.ObjectParser;
 
-import rss_dashboard.client.network.dashboard.DashboardLayoutRequest;
-import rss_dashboard.client.network.dashboard.DashboardLayoutResponse;
-import rss_dashboard.client.network.dashboard.DashboardModificationRequest;
-import rss_dashboard.client.network.dashboard.DashboardModificationResponse;
-import rss_dashboard.client.network.dashboard.DashboardRequest;
-import rss_dashboard.client.network.dashboard.DashboardResponse;
-import rss_dashboard.client.network.misc.KeepAliveRequest;
-import rss_dashboard.client.network.misc.KeepAliveResponse;
-import rss_dashboard.client.network.misc.LoginRequest;
-import rss_dashboard.client.network.misc.LoginResponse;
-import rss_dashboard.client.network.misc.LogoutRequest;
-import rss_dashboard.client.network.misc.LogoutResponse;
-import rss_dashboard.client.network.rss.RssChannelRequest;
-import rss_dashboard.client.network.rss.RssChannelResponse;
-import rss_dashboard.client.network.rss.RssItemRequest;
-import rss_dashboard.client.network.rss.RssItemResponse;
+import rss_dashboard.client.model.dashboard.Dashboard;
+import rss_dashboard.client.model.dashboard.DashboardLayout;
+import rss_dashboard.client.model.rss.RssChannel;
+import rss_dashboard.client.model.rss.RssItem;
 import rss_dashboard.common.model.dashboard.IDashboard;
 import rss_dashboard.common.model.dashboard.IDashboardLayout;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssItem;
-import rss_dashboard.common.network.dashboard.IDashboardLayoutRequest;
-import rss_dashboard.common.network.dashboard.IDashboardModificationRequest;
-import rss_dashboard.common.network.dashboard.IDashboardRequest;
-import rss_dashboard.common.network.misc.IKeepAliveRequest;
-import rss_dashboard.common.network.misc.ILoginRequest;
-import rss_dashboard.common.network.misc.ILogoutRequest;
-import rss_dashboard.common.network.rss.IRssChannelRequest;
-import rss_dashboard.common.network.rss.IRssItemRequest;
 
 public class NetworkClient implements INetworkClient {
 	private static final JsonFactory JSON_FACTORY;
@@ -60,6 +37,9 @@ public class NetworkClient implements INetworkClient {
 			@Override
 			public void initialize(HttpRequest request) throws IOException {
 				request.setParser(objectParser);
+				request.getHeaders().setAccept("application/json");
+				request.getHeaders().setContentType("application/json");
+				request.getHeaders().set("keepalive", true);
 			}
 		});
 	}
@@ -82,98 +62,73 @@ public class NetworkClient implements INetworkClient {
 		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/layout"));
 	}
 
-	private HttpContent createHttpContent(Object request) {
-		JsonHttpContent httpContent = new JsonHttpContent(JSON_FACTORY, request);
-		httpContent.setMediaType(new HttpMediaType("application/json; charset=utf8"));
-		return httpContent;
-	}
-
 	@Override
 	public String login(String username, String password) throws IOException {
-		ILoginRequest request = LoginRequest.builder().username(username).password(password).build();
-		return HTTP_REQUEST_FACTORY
-				.buildRequest("POST", loginUrl, createHttpContent(request))
-				.execute()
-				.parseAs(LoginResponse.class)
-				.getToken();
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildPostRequest(loginUrl, new EmptyContent());
+		request.getHeaders().setAuthorization(String.format("Basic %s;%s", username, password));
+		return request.execute().parseAsString();
 	}
 
 	@Override
 	public void logout(String token) throws IOException {
-		ILogoutRequest request = LogoutRequest.builder().token(token).build();
-		HTTP_REQUEST_FACTORY
-				.buildRequest("POST", logoutUrl, createHttpContent(request))
-				.execute()
-				.parseAs(LogoutResponse.class);
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildPostRequest(logoutUrl, new EmptyContent());
+		request.getHeaders().setAuthorization(String.format("Basic %s", token));
+		request.execute();
 	}
 
 	@Override
 	public boolean doKeepAlive(String token) throws IOException {
-		IKeepAliveRequest request = KeepAliveRequest.builder().token(token).build();
-		return HTTP_REQUEST_FACTORY
-				.buildRequest("POST", keepAliveUrl, createHttpContent(request))
-				.execute()
-				.parseAs(KeepAliveResponse.class)
-				.isAlive();
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(keepAliveUrl);
+		request.getHeaders().setAuthorization(String.format("Basic %s", token));
+		return "true".equals(request.execute().parseAsString());
 	}
 
 	@Override
-	public Map<String, IRssChannel> getRssChannels(String token, List<String> ids) throws IOException {
-		IRssChannelRequest request = RssChannelRequest.builder().token(token).ids(ids).build();
-		return HTTP_REQUEST_FACTORY
-				.buildRequest("GET", rssChannelUrl, createHttpContent(request))
-				.execute()
-				.parseAs(RssChannelResponse.class)
-				.getChannels();
+	public IRssChannel getRssChannel(String token, String id) throws IOException {
+		rssChannelUrl.set("id", id);
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(rssChannelUrl);
+		request.getHeaders().setAuthorization(String.format("Basic %s", token));
+		return request.execute().parseAs(RssChannel.class);
 	}
 
 	@Override
-	public Map<String, IRssItem> getRssItems(String token, List<String> ids) throws IOException {
-		IRssItemRequest request = RssItemRequest.builder().token(token).ids(ids).build();
-		return HTTP_REQUEST_FACTORY
-				.buildRequest("GET", rssItemUrl, createHttpContent(request))
-				.execute()
-				.parseAs(RssItemResponse.class)
-				.getItems();
+	public IRssItem getRssItem(String token, String id) throws IOException {
+		rssItemUrl.set("id", id);
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(rssItemUrl);
+		request.getHeaders().setAuthorization(String.format("Basic %s", token));
+		return request.execute().parseAs(RssItem.class);
 	}
 
 	@Override
-	public IDashboard getDashboard(String token) throws IOException {
-		IDashboardRequest request = DashboardRequest.builder().token(token).build();
-		return HTTP_REQUEST_FACTORY
-				.buildRequest("GET", dashboardUrl, createHttpContent(request))
-				.execute()
-				.parseAs(DashboardResponse.class)
-				.getDashboard();
+	public IDashboard getDashboard(String token, long dateFrom, long dateTill, List<String> categories)
+			throws IOException {
+		dashboardUrl.set("dateFrom", dateFrom);
+		dashboardUrl.set("dateTill", dateTill);
+		dashboardUrl.set("categories", String.join("/", categories));
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardUrl);
+		request.getHeaders().setAuthorization(String.format("Basic %s", token));
+		return request.execute().parseAs(Dashboard.class);
 	}
 
 	@Override
 	public IDashboardLayout getDashboardLayout(String token) throws IOException {
-		IDashboardLayoutRequest request = DashboardLayoutRequest.builder().token(token).build();
-		return HTTP_REQUEST_FACTORY
-				.buildRequest("GET", dashboardLayoutUrl, createHttpContent(request))
-				.execute()
-				.parseAs(DashboardLayoutResponse.class)
-				.getLayout();
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardLayoutUrl);
+		request.getHeaders().setAuthorization(String.format("Basic %s", token));
+		return request.execute().parseAs(DashboardLayout.class);
 	}
 
 	@Override
-	public void addFeedUrl(String token, int pageId, int rowId, int columnId, String feedUrl) throws IOException {
-		IDashboardModificationRequest request = DashboardModificationRequest.builder()
-				.pageId(pageId).rowId(rowId).columnId(columnId).feedUrl(feedUrl).build();
-		HTTP_REQUEST_FACTORY
-				.buildRequest("POST", dashboardUrl, createHttpContent(request))
-				.execute()
-				.parseAs(DashboardModificationResponse.class);
-	}
-
-	@Override
-	public void removeFeedUrl(String token, int pageId, int rowId, int columnId) throws IOException {
-		IDashboardModificationRequest request = DashboardModificationRequest.builder()
-				.pageId(pageId).rowId(rowId).columnId(columnId).feedUrl(null).build();
-		HTTP_REQUEST_FACTORY
-				.buildRequest("DELETE", dashboardUrl, createHttpContent(request))
-				.execute()
-				.parseAs(DashboardModificationResponse.class);
+	public void modifyDashboardLayout(String token, int pageId, int rowId, int columnId, String feedUrl)
+			throws IOException {
+		dashboardLayoutUrl.set("pageId", pageId);
+		dashboardLayoutUrl.set("rowId", rowId);
+		dashboardLayoutUrl.set("columnId", columnId);
+		dashboardLayoutUrl.set("feedUrl", feedUrl);
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildRequest(
+				feedUrl == null ? "DELETE" : "POST",
+				dashboardLayoutUrl,
+				new EmptyContent());
+		request.getHeaders().setAuthorization(String.format("Basic %s", token));
+		request.execute();
 	}
 }

@@ -6,15 +6,17 @@ import com.google.api.client.util.Key;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import rss_dashboard.common.model.rss.IRssChannel;
 
 @Getter
+@NoArgsConstructor
 public class RssChannel extends RssElement implements IRssChannel {
 	@Key
-	private final String language;
+	private String language;
 
 	@Key
-	private final String imageUrl;
+	private String imageUrl;
 
 	@Builder
 	private RssChannel(String id, String title, String link, String description, List<String> categories,

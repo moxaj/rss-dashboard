@@ -6,21 +6,23 @@ import com.google.api.client.util.Key;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import rss_dashboard.common.model.rss.IRssElement;
 
-@AllArgsConstructor
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class RssElement implements IRssElement {
 	@Key
-	private final String id;
+	private String id;
 	@Key
-	private final String title;
+	private String title;
 	@Key
-	private final String link;
+	private String link;
 	@Key
-	private final String description;
+	private String description;
 	@Key
-	private final List<String> categories;
+	private List<String> categories;
 	@Key
-	private final String pubDate;
+	private String pubDate;
 }

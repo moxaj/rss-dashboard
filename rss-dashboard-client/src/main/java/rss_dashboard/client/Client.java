@@ -16,13 +16,13 @@ import rss_dashboard.client.network.NetworkClient;
 import rss_dashboard.client.view.login.LoginViewController;
 import rss_dashboard.client.view.main.MainViewController;
 
-public class Main extends Application {
+public class Client extends Application {
 	public static final boolean DEBUG = false;
 
 	private final Properties properties;
 	private final INetworkClient networkClient;
 
-	public Main() {
+	public Client() {
 		properties = new Properties();
 		try {
 			properties.load(new FileInputStream("src/main/resources/network.properties"));

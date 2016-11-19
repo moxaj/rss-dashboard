@@ -6,12 +6,14 @@ import com.google.api.client.util.Key;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import rss_dashboard.common.model.rss.IRssItem;
 
 @Getter
+@NoArgsConstructor
 public class RssItem extends RssElement implements IRssItem {
 	@Key
-	private final String author;
+	private String author;
 
 	@Builder
 	private RssItem(String id, String title, String link, String description, List<String> categories, String pubDate,

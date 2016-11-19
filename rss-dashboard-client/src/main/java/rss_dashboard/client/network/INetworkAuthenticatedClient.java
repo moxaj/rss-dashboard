@@ -2,7 +2,6 @@ package rss_dashboard.client.network;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import rss_dashboard.common.model.dashboard.IDashboard;
 import rss_dashboard.common.model.dashboard.IDashboardLayout;
@@ -14,15 +13,13 @@ public interface INetworkAuthenticatedClient {
 
 	boolean doKeepAlive(String token) throws IOException;
 
-	Map<String, IRssChannel> getRssChannels(String token, List<String> ids) throws IOException;
+	IRssChannel getRssChannel(String token, String id) throws IOException;
 
-	Map<String, IRssItem> getRssItems(String token, List<String> ids) throws IOException;
+	IRssItem getRssItem(String token, String id) throws IOException;
 
-	IDashboard getDashboard(String token) throws IOException;
+	IDashboard getDashboard(String token, long dateFrom, long dateTill, List<String> categories) throws IOException;
 
 	IDashboardLayout getDashboardLayout(String token) throws IOException;
 
-	void addFeedUrl(String token, int pageId, int rowId, int columnId, String feedUrl) throws IOException;
-
-	void removeFeedUrl(String token, int pageId, int rowId, int columnId) throws IOException;
+	void modifyDashboardLayout(String token, int pageId, int rowId, int columnId, String feedUrl) throws IOException;
 }

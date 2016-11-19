@@ -4,5 +4,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface IDashboard {
-	Map<String, List<String>> getIds();
+	Map<String, List<String>> getRssChannelMapping();
 }

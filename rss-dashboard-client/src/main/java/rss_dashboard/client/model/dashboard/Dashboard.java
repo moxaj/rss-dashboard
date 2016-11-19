@@ -5,13 +5,17 @@ import java.util.Map;
 
 import com.google.api.client.util.Key;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import rss_dashboard.common.model.dashboard.IDashboard;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class Dashboard implements IDashboard {
 	@Key
-	private final Map<String, List<String>> ids;
+	private Map<String, List<String>> rssChannelMapping;
 }
