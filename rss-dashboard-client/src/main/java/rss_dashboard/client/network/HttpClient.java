@@ -26,7 +26,7 @@ import rss_dashboard.common.model.dashboard.IDashboardLayout;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssItem;
 
-public class NetworkClient implements INetworkClient {
+public class HttpClient implements INetworkClient {
 	private static final JsonFactory JSON_FACTORY;
 	private static final HttpRequestFactory HTTP_REQUEST_FACTORY;
 	static {
@@ -52,10 +52,10 @@ public class NetworkClient implements INetworkClient {
 	private final GenericUrl dashboardUrl;
 	private final GenericUrl dashboardLayoutUrl;
 
-	public NetworkClient(String baseUrlString) throws MalformedURLException {
+	public HttpClient(String baseUrlString) throws MalformedURLException {
 		loginUrl = new GenericUrl(new URL(baseUrlString + "/misc/login"));
 		logoutUrl = new GenericUrl(new URL(baseUrlString + "/misc/logout"));
-		keepAliveUrl = new GenericUrl(new URL(baseUrlString + "/misc/keepAlive"));
+		keepAliveUrl = new GenericUrl(new URL(baseUrlString + "/misc/keepalive"));
 		rssChannelUrl = new GenericUrl(new URL(baseUrlString + "/rss/channels"));
 		rssItemUrl = new GenericUrl(new URL(baseUrlString + "/rss/items"));
 		dashboardUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/dashboard"));

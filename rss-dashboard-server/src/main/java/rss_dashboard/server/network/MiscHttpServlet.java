@@ -13,7 +13,7 @@ import org.glassfish.grizzly.http.util.HttpStatus;
 import rss_dashboard.server.model.misc.ClientProfile;
 
 @Path("/misc")
-public class MiscServlet extends AbstractServlet {
+public class MiscHttpServlet extends AbstractHttpServlet {
 	@POST
 	@Path("/login")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

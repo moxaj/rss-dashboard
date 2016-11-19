@@ -11,8 +11,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import rss_dashboard.client.network.HttpClient;
 import rss_dashboard.client.network.INetworkClient;
-import rss_dashboard.client.network.NetworkClient;
 import rss_dashboard.client.view.login.LoginViewController;
 import rss_dashboard.client.view.main.MainViewController;
 
@@ -31,7 +31,7 @@ public class Client extends Application {
 		}
 
 		try {
-			networkClient = new NetworkClient(properties.getProperty("baseUrl"));
+			networkClient = new HttpClient(properties.getProperty("baseUrl"));
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("Malformed server url!", e);
 		}

@@ -7,7 +7,7 @@ import org.glassfish.grizzly.http.server.Response;
 
 import rss_dashboard.server.model.misc.ClientProfile;
 
-public abstract class AbstractServlet {
+public abstract class AbstractHttpServlet {
 	@Context
 	protected Request request;
 	@Context

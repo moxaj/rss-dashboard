@@ -17,7 +17,7 @@ import rss_dashboard.server.model.dashboard.DashboardLayout;
 import rss_dashboard.server.model.misc.ClientProfile;
 
 @Path("/dashboard")
-public class DashboardServlet extends AbstractServlet {
+public class DashboardHttpServlet extends AbstractHttpServlet {
 	@GET
 	@Path("/dashboard")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
