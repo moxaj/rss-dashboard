@@ -2,6 +2,8 @@ package rss_dashboard.server.controller;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import rss_dashboard.common.network.rss.IRssChannelRequest;
 import rss_dashboard.common.network.rss.IRssChannelResponse;
@@ -15,6 +17,7 @@ public class RestRss {
 	
 	@GET
 	@Path("/channels")
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public IRssChannelResponse channels(IRssChannelRequest request) {
 		System.out.println("/rss/channels");
 
@@ -24,6 +27,7 @@ public class RestRss {
 	
 	@GET
 	@Path("/items")
+    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public IRssItemResponse channels(IRssItemRequest request) {
 		System.out.println("/rss/items");
 		
