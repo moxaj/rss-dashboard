@@ -17,11 +17,11 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.ObjectParser;
 
-import rss_dashboard.client.model.dashboard.Dashboard;
+import rss_dashboard.client.model.dashboard.DashboardMapping;
 import rss_dashboard.client.model.dashboard.DashboardLayout;
 import rss_dashboard.client.model.rss.RssChannel;
 import rss_dashboard.client.model.rss.RssItem;
-import rss_dashboard.common.model.dashboard.IDashboard;
+import rss_dashboard.common.model.dashboard.IDashboardMapping;
 import rss_dashboard.common.model.dashboard.IDashboardLayout;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssItem;
@@ -49,7 +49,7 @@ public class HttpClient implements INetworkClient {
 	private final GenericUrl keepAliveUrl;
 	private final GenericUrl rssChannelUrl;
 	private final GenericUrl rssItemUrl;
-	private final GenericUrl dashboardUrl;
+	private final GenericUrl dashboardMappingUrl;
 	private final GenericUrl dashboardLayoutUrl;
 
 	public HttpClient(String baseUrlString) throws MalformedURLException {
@@ -58,7 +58,7 @@ public class HttpClient implements INetworkClient {
 		keepAliveUrl = new GenericUrl(new URL(baseUrlString + "/misc/keepalive"));
 		rssChannelUrl = new GenericUrl(new URL(baseUrlString + "/rss/channels"));
 		rssItemUrl = new GenericUrl(new URL(baseUrlString + "/rss/items"));
-		dashboardUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/dashboard"));
+		dashboardMappingUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/mapping"));
 		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/layout"));
 	}
 
@@ -100,14 +100,14 @@ public class HttpClient implements INetworkClient {
 	}
 
 	@Override
-	public IDashboard getDashboard(String token, long dateFrom, long dateTill, List<String> categories)
+	public IDashboardMapping getDashboardMapping(String token, long dateFrom, long dateTill, List<String> categories)
 			throws IOException {
-		dashboardUrl.set("dateFrom", dateFrom);
-		dashboardUrl.set("dateTill", dateTill);
-		dashboardUrl.set("categories", String.join("/", categories));
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardUrl);
+		dashboardMappingUrl.set("dateFrom", dateFrom);
+		dashboardMappingUrl.set("dateTill", dateTill);
+		dashboardMappingUrl.set("categories", String.join("/", categories));
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardMappingUrl);
 		request.getHeaders().setAuthorization(String.format("Basic %s", token));
-		return request.execute().parseAs(Dashboard.class);
+		return request.execute().parseAs(DashboardMapping.class);
 	}
 
 	@Override

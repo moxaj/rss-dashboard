@@ -1,5 +1,7 @@
 package rss_dashboard.common.model.dashboard;
 
+import java.util.List;
+
 public interface IDashboardLayout {
-	String[][][] getRssChannelIds();
+	List<String[][]> getLayout();
 }

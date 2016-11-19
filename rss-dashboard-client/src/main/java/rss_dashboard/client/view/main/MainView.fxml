@@ -13,10 +13,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-	minWidth="-Infinity" prefHeight="704.0" prefWidth="995.0"
-	xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="rss_dashboard.client.view.main.MainViewController">
+<VBox fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="704.0" prefWidth="995.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<MenuBar prefHeight="25.0" prefWidth="215.0">
 			<menus>
@@ -32,26 +29,22 @@
 				</Menu>
 			</menus>
 		</MenuBar>
-		<SplitPane dividerPositions="0.24269889224572003"
-			prefHeight="160.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+		<SplitPane dividerPositions="0.24269889224572003" prefHeight="160.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
 			<items>
 				<Pane prefHeight="200.0" prefWidth="200.0" />
 				<VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
 					<children>
 						<HBox alignment="CENTER_LEFT" spacing="10.0">
 							<children>
-								<Label text="Date till" />
-								<DatePicker fx:id="tillDatePicker" prefHeight="25.0"
-									prefWidth="150.0" />
-								<Label text="Date from" />
-								<DatePicker fx:id="fromDatePicker" prefHeight="25.0"
-									prefWidth="150.0" />
-								<Label text="Keywords" />
-								<TextField fx:id="keywordsTextField" HBox.hgrow="ALWAYS" />
+								<Label minHeight="-Infinity" minWidth="-Infinity" text="Date till" />
+								<DatePicker fx:id="tillDatePicker" prefHeight="25.0" prefWidth="150.0" />
+								<Label minHeight="-Infinity" minWidth="-Infinity" text="Date from" />
+								<DatePicker fx:id="fromDatePicker" prefHeight="25.0" prefWidth="150.0" />
+								<Label minHeight="-Infinity" minWidth="-Infinity" text="Keywords" />
+								<TextField fx:id="keywordsTextField" onKeyPressed="#handleKeywordsKeyPressed" HBox.hgrow="ALWAYS" />
 							</children>
 						</HBox>
-						<TabPane fx:id="rssTabPane" prefHeight="200.0" prefWidth="200.0"
-							tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS" />
+						<TabPane fx:id="rssTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" VBox.vgrow="ALWAYS" />
 					</children>
 					<padding>
 						<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

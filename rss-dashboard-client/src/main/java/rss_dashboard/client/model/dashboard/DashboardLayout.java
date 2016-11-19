@@ -1,5 +1,7 @@
 package rss_dashboard.client.model.dashboard;
 
+import java.util.List;
+
 import com.google.api.client.util.Key;
 
 import lombok.AllArgsConstructor;
@@ -14,5 +16,5 @@ import rss_dashboard.common.model.dashboard.IDashboardLayout;
 @Builder
 public class DashboardLayout implements IDashboardLayout {
 	@Key
-	private String[][][] rssChannelIds;
+	private List<String[][]> layout;
 }

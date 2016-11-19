@@ -1,5 +1,7 @@
 package rss_dashboard.server.model.dashboard;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,5 +19,5 @@ import rss_dashboard.common.model.dashboard.IDashboardLayout;
 @AllArgsConstructor
 @Builder
 public class DashboardLayout implements IDashboardLayout {
-	private String[][][] rssChannelIds;
+	private List<String[][]> layout;
 }

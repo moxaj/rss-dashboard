@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.util.Properties;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -39,15 +40,16 @@ public class Client extends Application {
 
 	private void showLoginScene() {
 		FXMLLoader loader = new FXMLLoader(LoginViewController.class.getResource("LoginView.fxml"));
+
+		LoginViewController controller = new LoginViewController(networkClient);
+		loader.setController(controller);
+
 		Pane pane;
 		try {
 			pane = loader.load();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-
-		LoginViewController controller = loader.getController();
-		controller.setNetworkLoginClient(networkClient);
 
 		Stage loginStage = new Stage();
 		loginStage.setTitle("Sign in with Google credentials");
@@ -65,6 +67,10 @@ public class Client extends Application {
 
 	private void showMainScene(String token) {
 		FXMLLoader loader = new FXMLLoader(MainViewController.class.getResource("MainView.fxml"));
+
+		MainViewController controller = new MainViewController(networkClient, token);
+		loader.setController(controller);
+
 		Pane pane;
 		try {
 			pane = loader.load();
@@ -72,13 +78,9 @@ public class Client extends Application {
 			throw new RuntimeException(e);
 		}
 
-		MainViewController controller = loader.getController();
-		controller.setToken(token);
-
 		Stage mainStage = new Stage();
 		mainStage.setScene(new Scene(pane));
 		mainStage.setTitle("RSS Dashboard Reader");
-		mainStage.setResizable(false);
 		mainStage.centerOnScreen();
 		mainStage.initStyle(StageStyle.UNIFIED);
 		mainStage.setOnCloseRequest(event -> {

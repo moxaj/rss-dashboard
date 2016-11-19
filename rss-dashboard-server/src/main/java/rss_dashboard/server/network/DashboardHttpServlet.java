@@ -10,18 +10,18 @@ import javax.ws.rs.core.MediaType;
 
 import org.glassfish.grizzly.http.util.HttpStatus;
 
-import rss_dashboard.common.model.dashboard.IDashboard;
+import rss_dashboard.common.model.dashboard.IDashboardMapping;
 import rss_dashboard.common.model.dashboard.IDashboardLayout;
-import rss_dashboard.server.model.dashboard.Dashboard;
+import rss_dashboard.server.model.dashboard.DashboardMapping;
 import rss_dashboard.server.model.dashboard.DashboardLayout;
 import rss_dashboard.server.model.misc.ClientProfile;
 
 @Path("/dashboard")
 public class DashboardHttpServlet extends AbstractHttpServlet {
 	@GET
-	@Path("/dashboard")
+	@Path("/mapping")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public IDashboard getDashboard(
+	public IDashboardMapping getDashboardMapping(
 			@QueryParam("dateFrom") long dateFrom,
 			@QueryParam("dateTill") long dateTill,
 			@QueryParam("categories") String categoriesStr) {
@@ -32,13 +32,13 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 		}
 
 		// TODO
-		return Dashboard.builder().build();
+		return DashboardMapping.builder().build();
 	}
 
 	@GET
 	@Path("/layout")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public IDashboardLayout getLayout() {
+	public IDashboardLayout getDashboardLayout() {
 		ClientProfile profile = getClientProfile();
 		if (profile == null) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
@@ -52,7 +52,7 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 	@POST
 	@Path("/layout")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public void deleteLayout(
+	public void deleteDashboardLayout(
 			@QueryParam("pageId") String pageId,
 			@QueryParam("rowId") String rowId,
 			@QueryParam("columnId") String columnId,
@@ -69,7 +69,7 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 	@DELETE
 	@Path("/layout")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public void postLayout(
+	public void postDashboardLayout(
 			@QueryParam("pageId") int pageId,
 			@QueryParam("rowId") int rowId,
 			@QueryParam("columnId") int columnId,

@@ -1,6 +1,7 @@
 package rss_dashboard.client.view.login;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpStatusCodes;
@@ -29,11 +30,11 @@ public class LoginViewController {
 	@FXML
 	private Button loginButton;
 
-	private INetworkLoginClient client = null;
-	private String token = null;
+	private final INetworkLoginClient networkClient;
+	private String token;
 
-	public void setNetworkLoginClient(INetworkLoginClient client) {
-		this.client = client;
+	public LoginViewController(INetworkLoginClient networkClient) {
+		this.networkClient = networkClient;
 	}
 
 	public String getToken() {
@@ -61,54 +62,45 @@ public class LoginViewController {
 	}
 
 	private void disableInputs(boolean disable) {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				rootPane.setDisable(disable);
-			}
+		Platform.runLater(() -> {
+			rootPane.setDisable(disable);
 		});
 	}
 
 	private void close() {
-		Platform.runLater(new Runnable() {
-			@Override
-			public void run() {
-				Stage stage = (Stage) loginButton.getScene().getWindow();
-				stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-			}
+		Platform.runLater(() -> {
+			Stage stage = (Stage) rootPane.getScene().getWindow();
+			stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
 		});
 	}
 
 	private void login() {
-		if (client == null) {
+		if (networkClient == null) {
 			throw new RuntimeException("LoginViewController: INetworkLoginClient not set!");
 		}
 
-		disableInputs(true);
+		CompletableFuture.runAsync(() -> {
+			disableInputs(true);
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					token = client.login(emailTextField.getText(), passwordTextField.getText());
-					close();
-				} catch (HttpResponseException e) {
-					switch (e.getStatusCode()) {
-					case HttpStatusCodes.STATUS_CODE_UNAUTHORIZED:
-						Alerts.showErrorAlert("Invalid credentials!",
-								"Please verify your email / password combination.");
-						break;
-					default:
-						Alerts.showServerUnavailableAlert();
-						break;
-					}
-				} catch (IOException e) {
+			try {
+				token = networkClient.login(emailTextField.getText(), passwordTextField.getText());
+				close();
+			} catch (HttpResponseException e) {
+				switch (e.getStatusCode()) {
+				case HttpStatusCodes.STATUS_CODE_UNAUTHORIZED:
+					Alerts.showErrorAlert("Invalid credentials!",
+							"Please verify your email / password combination.");
+					break;
+				default:
 					Alerts.showServerUnavailableAlert();
+					break;
 				}
-
-				disableInputs(false);
+			} catch (IOException e) {
+				Alerts.showServerUnavailableAlert();
 			}
-		}).start();
+
+			disableInputs(false);
+		});
 	}
 
 	@FXML

@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import rss_dashboard.common.model.dashboard.IDashboard;
+import rss_dashboard.common.model.dashboard.IDashboardMapping;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,6 +19,6 @@ import rss_dashboard.common.model.dashboard.IDashboard;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Dashboard implements IDashboard {
-	private Map<String, List<String>> rssChannelMapping;
+public class DashboardMapping implements IDashboardMapping {
+	private Map<String, List<String>> mapping;
 }
