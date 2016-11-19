@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpContent;
+import com.google.api.client.http.HttpMediaType;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpRequestInitializer;
@@ -80,11 +82,17 @@ public class NetworkClient implements INetworkClient {
 		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/layout"));
 	}
 
+	private HttpContent createHttpContent(Object request) {
+		JsonHttpContent httpContent = new JsonHttpContent(JSON_FACTORY, request);
+		httpContent.setMediaType(new HttpMediaType("application/json; charset=utf8"));
+		return httpContent;
+	}
+
 	@Override
 	public String login(String username, String password) throws IOException {
 		ILoginRequest request = LoginRequest.builder().username(username).password(password).build();
 		return HTTP_REQUEST_FACTORY
-				.buildRequest("POST", loginUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("POST", loginUrl, createHttpContent(request))
 				.execute()
 				.parseAs(LoginResponse.class)
 				.getToken();
@@ -94,7 +102,7 @@ public class NetworkClient implements INetworkClient {
 	public void logout(String token) throws IOException {
 		ILogoutRequest request = LogoutRequest.builder().token(token).build();
 		HTTP_REQUEST_FACTORY
-				.buildRequest("POST", logoutUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("POST", logoutUrl, createHttpContent(request))
 				.execute()
 				.parseAs(LogoutResponse.class);
 	}
@@ -103,7 +111,7 @@ public class NetworkClient implements INetworkClient {
 	public boolean doKeepAlive(String token) throws IOException {
 		IKeepAliveRequest request = KeepAliveRequest.builder().token(token).build();
 		return HTTP_REQUEST_FACTORY
-				.buildRequest("POST", keepAliveUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("POST", keepAliveUrl, createHttpContent(request))
 				.execute()
 				.parseAs(KeepAliveResponse.class)
 				.isAlive();
@@ -113,7 +121,7 @@ public class NetworkClient implements INetworkClient {
 	public Map<String, IRssChannel> getRssChannels(String token, List<String> ids) throws IOException {
 		IRssChannelRequest request = RssChannelRequest.builder().token(token).ids(ids).build();
 		return HTTP_REQUEST_FACTORY
-				.buildRequest("GET", rssChannelUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("GET", rssChannelUrl, createHttpContent(request))
 				.execute()
 				.parseAs(RssChannelResponse.class)
 				.getChannels();
@@ -123,7 +131,7 @@ public class NetworkClient implements INetworkClient {
 	public Map<String, IRssItem> getRssItems(String token, List<String> ids) throws IOException {
 		IRssItemRequest request = RssItemRequest.builder().token(token).ids(ids).build();
 		return HTTP_REQUEST_FACTORY
-				.buildRequest("GET", rssItemUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("GET", rssItemUrl, createHttpContent(request))
 				.execute()
 				.parseAs(RssItemResponse.class)
 				.getItems();
@@ -133,7 +141,7 @@ public class NetworkClient implements INetworkClient {
 	public IDashboard getDashboard(String token) throws IOException {
 		IDashboardRequest request = DashboardRequest.builder().token(token).build();
 		return HTTP_REQUEST_FACTORY
-				.buildRequest("GET", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("GET", dashboardUrl, createHttpContent(request))
 				.execute()
 				.parseAs(DashboardResponse.class)
 				.getDashboard();
@@ -143,7 +151,7 @@ public class NetworkClient implements INetworkClient {
 	public IDashboardLayout getDashboardLayout(String token) throws IOException {
 		IDashboardLayoutRequest request = DashboardLayoutRequest.builder().token(token).build();
 		return HTTP_REQUEST_FACTORY
-				.buildRequest("GET", dashboardLayoutUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("GET", dashboardLayoutUrl, createHttpContent(request))
 				.execute()
 				.parseAs(DashboardLayoutResponse.class)
 				.getLayout();
@@ -154,7 +162,7 @@ public class NetworkClient implements INetworkClient {
 		IDashboardModificationRequest request = DashboardModificationRequest.builder()
 				.pageId(pageId).rowId(rowId).columnId(columnId).feedUrl(feedUrl).build();
 		HTTP_REQUEST_FACTORY
-				.buildRequest("POST", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("POST", dashboardUrl, createHttpContent(request))
 				.execute()
 				.parseAs(DashboardModificationResponse.class);
 	}
@@ -164,7 +172,7 @@ public class NetworkClient implements INetworkClient {
 		IDashboardModificationRequest request = DashboardModificationRequest.builder()
 				.pageId(pageId).rowId(rowId).columnId(columnId).feedUrl(null).build();
 		HTTP_REQUEST_FACTORY
-				.buildRequest("DELETE", dashboardUrl, new JsonHttpContent(JSON_FACTORY, request))
+				.buildRequest("DELETE", dashboardUrl, createHttpContent(request))
 				.execute()
 				.parseAs(DashboardModificationResponse.class);
 	}

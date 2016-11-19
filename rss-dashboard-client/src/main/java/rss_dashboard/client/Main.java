@@ -17,7 +17,7 @@ import rss_dashboard.client.view.login.LoginViewController;
 import rss_dashboard.client.view.main.MainViewController;
 
 public class Main extends Application {
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	private final Properties properties;
 	private final INetworkClient networkClient;
