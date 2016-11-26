@@ -17,7 +17,8 @@ public interface INetworkAuthenticatedClient {
 
 	IRssItem getRssItem(String token, String id) throws IOException;
 
-	IDashboardMapping getDashboardMapping(String token, long dateFrom, long dateTill, List<String> categories) throws IOException;
+	IDashboardMapping getDashboardMapping(String token, long dateFrom, long dateTill, List<String> categories)
+			throws IOException;
 
 	IDashboardLayout getDashboardLayout(String token) throws IOException;
 

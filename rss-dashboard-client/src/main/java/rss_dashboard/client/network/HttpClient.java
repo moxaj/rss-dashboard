@@ -124,9 +124,7 @@ public class HttpClient implements INetworkClient {
 		dashboardLayoutUrl.set("rowId", rowId);
 		dashboardLayoutUrl.set("columnId", columnId);
 		dashboardLayoutUrl.set("feedUrl", feedUrl);
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildRequest(
-				feedUrl == null ? "DELETE" : "POST",
-				dashboardLayoutUrl,
+		HttpRequest request = HTTP_REQUEST_FACTORY.buildRequest(feedUrl == null ? "DELETE" : "POST", dashboardLayoutUrl,
 				new EmptyContent());
 		request.getHeaders().setAuthorization(String.format("Basic %s", token));
 		request.execute();

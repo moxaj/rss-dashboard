@@ -6,7 +6,6 @@ import java.net.MalformedURLException;
 import java.util.Properties;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -97,6 +96,10 @@ public class Client extends Application {
 	}
 
 	public static void main(String[] args) {
-		launch(args);
+		try {
+			launch(args);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 }

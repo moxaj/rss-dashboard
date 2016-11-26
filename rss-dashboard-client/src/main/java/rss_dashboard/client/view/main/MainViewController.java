@@ -89,13 +89,9 @@ public class MainViewController {
 	private IDashboardMapping getDashboardMapping() throws IOException {
 		LocalDate fromLocalDate = fromDatePicker.getValue();
 		LocalDate tillLocalDate = tillDatePicker.getValue();
-		return networkClient.getDashboardMapping(
-				token,
-				fromLocalDate != null
-						? fromLocalDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()
-						: 0,
-				tillLocalDate != null
-						? tillLocalDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()
+		return networkClient.getDashboardMapping(token,
+				fromLocalDate != null ? fromLocalDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond() : 0,
+				tillLocalDate != null ? tillLocalDate.atStartOfDay(ZoneId.systemDefault()).toEpochSecond()
 						: new Date().getTime(),
 				Arrays.asList(keywordsTextField.getText().split(" ")));
 	}

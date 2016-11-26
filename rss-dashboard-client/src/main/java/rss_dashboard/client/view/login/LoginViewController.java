@@ -88,8 +88,7 @@ public class LoginViewController {
 			} catch (HttpResponseException e) {
 				switch (e.getStatusCode()) {
 				case HttpStatusCodes.STATUS_CODE_UNAUTHORIZED:
-					Alerts.showErrorAlert("Invalid credentials!",
-							"Please verify your email / password combination.");
+					Alerts.showErrorAlert("Invalid credentials!", "Please verify your email / password combination.");
 					break;
 				default:
 					Alerts.showServerUnavailableAlert();
