@@ -10,44 +10,43 @@ public class RssCategoryRepository extends AbstractRepository implements IReposi
 	public void add(RssCategory item) throws RepositoryException {
 		List<RssCategory> helper = new ArrayList<>();
 		helper.add(item);
-		
+
 		add(helper);
 	}
 
 	@Override
 	public void add(Iterable<RssCategory> items) throws RepositoryException {
-		
+
 	}
 
 	@Override
 	public void update(RssCategory item) throws RepositoryException {
 		List<RssCategory> helper = new ArrayList<>();
 		helper.add(item);
-		
+
 		update(helper);
 	}
 
 	@Override
 	public void update(Iterable<RssCategory> items) throws RepositoryException {
-		
+
 	}
 
 	@Override
-	public void remove(RssCategory item) throws RepositoryException {
-		List<RssCategory> helper = new ArrayList<>();
-		helper.add(item);
-		
+	public void remove(String id) throws RepositoryException {
+		List<String> helper = new ArrayList<>();
+		helper.add(id);
+
 		remove(helper);
 	}
 
 	@Override
-	public void remove(Iterable<RssCategory> items) throws RepositoryException {
-		
+	public void remove(Iterable<String> ids) throws RepositoryException {
+
 	}
 
 	@Override
 	public List<RssCategory> query(RssCategory filter) throws RepositoryException {
-		
 
 		return null;
 	}

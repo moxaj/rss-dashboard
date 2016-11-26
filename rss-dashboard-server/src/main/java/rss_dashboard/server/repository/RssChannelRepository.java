@@ -10,45 +10,44 @@ public class RssChannelRepository extends AbstractRepository implements IReposit
 	public void add(RssChannel item) throws RepositoryException {
 		List<RssChannel> helper = new ArrayList<>();
 		helper.add(item);
-		
+
 		add(helper);
 	}
 
 	@Override
 	public void add(Iterable<RssChannel> items) throws RepositoryException {
-		
+
 	}
 
 	@Override
 	public void update(RssChannel item) throws RepositoryException {
 		List<RssChannel> helper = new ArrayList<>();
 		helper.add(item);
-		
+
 		update(helper);
 	}
 
 	@Override
 	public void update(Iterable<RssChannel> items) throws RepositoryException {
-		
+
 	}
 
 	@Override
-	public void remove(RssChannel item) throws RepositoryException {
-		List<RssChannel> helper = new ArrayList<>();
-		helper.add(item);
-		
+	public void remove(String id) throws RepositoryException {
+		List<String> helper = new ArrayList<>();
+		helper.add(id);
+
 		remove(helper);
 	}
 
 	@Override
-	public void remove(Iterable<RssChannel> items) throws RepositoryException {
-		
+	public void remove(Iterable<String> ids) throws RepositoryException {
+
 	}
 
 	@Override
 	public List<RssChannel> query(RssChannel filter) throws RepositoryException {
-		
-		
+
 		return null;
 	}
 }

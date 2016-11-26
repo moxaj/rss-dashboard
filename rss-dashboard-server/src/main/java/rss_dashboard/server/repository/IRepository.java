@@ -11,9 +11,9 @@ public interface IRepository<T> {
 
 	void update(Iterable<T> items) throws RepositoryException;
 
-	void remove(T item) throws RepositoryException;
+	void remove(String id) throws RepositoryException;
 
-	void remove(Iterable<T> items) throws RepositoryException;
+	void remove(Iterable<String> ids) throws RepositoryException;
 
 	List<T> query(T filter) throws RepositoryException;
 }

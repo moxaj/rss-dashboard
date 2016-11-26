@@ -11,7 +11,6 @@ import org.glassfish.grizzly.http.util.HttpStatus;
 
 import rss_dashboard.server.model.misc.AuthorizationException;
 import rss_dashboard.server.model.misc.AuthorizationProviders;
-import rss_dashboard.server.model.misc.GoogleAuthorizationHelper;
 import rss_dashboard.server.model.misc.IAuthorizationHelper;
 
 @Path("/misc")
@@ -35,6 +34,7 @@ public class MiscHttpServlet extends AbstractHttpServlet {
 
 		// provider-dependent helper instantiation
 		IAuthorizationHelper authorizationHelper;
+		
 		try {
 			authorizationHelper = createAuthorizationHelper(AuthorizationProviders.fromText(authorizationParts[0]));
 		} catch (AuthorizationException e) {
@@ -76,6 +76,7 @@ public class MiscHttpServlet extends AbstractHttpServlet {
 
 		// provider-dependent helper instantiation
 		IAuthorizationHelper authorizationHelper;
+		
 		try {
 			authorizationHelper = createAuthorizationHelper(AuthorizationProviders.fromText(authorizationParts[0]));
 		} catch (AuthorizationException e) {
@@ -91,32 +92,6 @@ public class MiscHttpServlet extends AbstractHttpServlet {
 			e.printStackTrace();
 			response.setStatus(HttpStatus.BAD_REQUEST_400);
 			return;
-		}
-	}
-
-	private String[] splitAuthorization(String authorization) throws AuthorizationException {
-		// must be filled
-		if (authorization == null) {
-			throw new AuthorizationException("authorization_empty");
-		}
-
-		// format: provider;authorization_data
-		String[] authorizationParts = authorization.split(";", 2);
-
-		if (authorizationParts.length != 2) {
-			throw new AuthorizationException("authorization_invalid_format");
-		}
-
-		return authorizationParts;
-	}
-
-	private IAuthorizationHelper createAuthorizationHelper(AuthorizationProviders provider)
-			throws AuthorizationException {
-		switch (provider) {
-		case GOOGLE:
-			return new GoogleAuthorizationHelper();
-		default:
-			throw new AuthorizationException("provider_invalid");
 		}
 	}
 }

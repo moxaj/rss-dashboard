@@ -14,6 +14,7 @@ import rss_dashboard.common.model.dashboard.IDashboardMapping;
 import rss_dashboard.common.model.dashboard.IDashboardLayout;
 import rss_dashboard.server.model.dashboard.DashboardMapping;
 import rss_dashboard.server.model.dashboard.DashboardLayout;
+import rss_dashboard.server.model.misc.AuthorizationException;
 import rss_dashboard.server.model.misc.ClientProfile;
 
 @Path("/dashboard")
@@ -21,18 +22,25 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 	@GET
 	@Path("/mapping")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public IDashboardMapping getDashboardMapping(
-			@QueryParam("dateFrom") long dateFrom,
-			@QueryParam("dateTill") long dateTill,
-			@QueryParam("categories") String categoriesStr) {
-		ClientProfile profile = getClientProfile();
+	public IDashboardMapping getDashboardMapping(@QueryParam("dateFrom") long dateFrom,
+			@QueryParam("dateTill") long dateTill, @QueryParam("categories") String categoriesStr) {
+		ClientProfile profile;
 		
-		if (profile == null) {
+		try {
+			profile = getClientProfile();
+		} catch (AuthorizationException e) {
+			e.printStackTrace();
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+			return null;
+		}
+		
+		if (profile == null || profile.isExpired() || !profile.isValid()) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
 
 		// TODO
+		
 		return DashboardMapping.builder().build();
 	}
 
@@ -40,26 +48,42 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 	@Path("/layout")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public IDashboardLayout getDashboardLayout() {
-		ClientProfile profile = getClientProfile();
-		if (profile == null) {
+		ClientProfile profile;
+		
+		try {
+			profile = getClientProfile();
+		} catch (AuthorizationException e) {
+			e.printStackTrace();
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+			return null;
+		}
+		
+		if (profile == null || profile.isExpired() || !profile.isValid()) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
 
 		// TODO
+		
 		return DashboardLayout.builder().build();
 	}
 
 	@POST
 	@Path("/layout")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public void deleteDashboardLayout(
-			@QueryParam("pageId") String pageId,
-			@QueryParam("rowId") String rowId,
-			@QueryParam("columnId") String columnId,
-			@QueryParam("feedUrl") String feedUrl) {
-		ClientProfile profile = getClientProfile();
-		if (profile == null) {
+	public void deleteDashboardLayout(@QueryParam("pageId") String pageId, @QueryParam("rowId") String rowId,
+			@QueryParam("columnId") String columnId, @QueryParam("feedUrl") String feedUrl) {
+		ClientProfile profile;
+		
+		try {
+			profile = getClientProfile();
+		} catch (AuthorizationException e) {
+			e.printStackTrace();
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+			return;
+		}
+		
+		if (profile == null || profile.isExpired() || !profile.isValid()) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return;
 		}
@@ -70,13 +94,19 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 	@DELETE
 	@Path("/layout")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public void postDashboardLayout(
-			@QueryParam("pageId") int pageId,
-			@QueryParam("rowId") int rowId,
-			@QueryParam("columnId") int columnId,
-			@QueryParam("feedUrl") String feedUrl) {
-		ClientProfile profile = getClientProfile();
-		if (profile == null) {
+	public void postDashboardLayout(@QueryParam("pageId") int pageId, @QueryParam("rowId") int rowId,
+			@QueryParam("columnId") int columnId, @QueryParam("feedUrl") String feedUrl) {
+		ClientProfile profile;
+		
+		try {
+			profile = getClientProfile();
+		} catch (AuthorizationException e) {
+			e.printStackTrace();
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+			return;
+		}
+		
+		if (profile == null || profile.isExpired() || !profile.isValid()) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return;
 		}

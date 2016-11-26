@@ -10,6 +10,7 @@ import org.glassfish.grizzly.http.util.HttpStatus;
 
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssItem;
+import rss_dashboard.server.model.misc.AuthorizationException;
 import rss_dashboard.server.model.misc.ClientProfile;
 import rss_dashboard.server.model.rss.RssChannel;
 import rss_dashboard.server.model.rss.RssItem;
@@ -19,30 +20,48 @@ public class RssHttpServlet extends AbstractHttpServlet {
 	@GET
 	@Path("/channels")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public IRssChannel getRssChannel(
-			@QueryParam("id") String id) {
-		ClientProfile profile = getClientProfile();
-		if (profile == null) {
+	public IRssChannel getRssChannel(@QueryParam("id") String id) {
+		ClientProfile profile;
+		
+		try {
+			profile = getClientProfile();
+		} catch (AuthorizationException e) {
+			e.printStackTrace();
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+			return null;
+		}
+		
+		if (profile == null || profile.isExpired() || !profile.isValid()) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
 
 		// TODO
+
 		return RssChannel.builder().build();
 	}
 
 	@GET
 	@Path("/items")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public IRssItem getRssItem(
-			@QueryParam("id") String id) {
-		ClientProfile profile = getClientProfile();
-		if (profile == null) {
+	public IRssItem getRssItem(@QueryParam("id") String id) {
+		ClientProfile profile;
+		
+		try {
+			profile = getClientProfile();
+		} catch (AuthorizationException e) {
+			e.printStackTrace();
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+			return null;
+		}
+		
+		if (profile == null || profile.isExpired() || !profile.isValid()) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
 
 		// TODO
+
 		return RssItem.builder().build();
 	}
 }

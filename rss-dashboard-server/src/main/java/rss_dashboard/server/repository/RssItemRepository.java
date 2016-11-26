@@ -10,45 +10,44 @@ public class RssItemRepository extends AbstractRepository implements IRepository
 	public void add(RssItem item) throws RepositoryException {
 		List<RssItem> helper = new ArrayList<>();
 		helper.add(item);
-		
+
 		add(helper);
 	}
 
 	@Override
 	public void add(Iterable<RssItem> items) throws RepositoryException {
-		
+
 	}
 
 	@Override
 	public void update(RssItem item) throws RepositoryException {
 		List<RssItem> helper = new ArrayList<>();
 		helper.add(item);
-		
+
 		update(helper);
 	}
 
 	@Override
 	public void update(Iterable<RssItem> items) throws RepositoryException {
-		
+
 	}
 
 	@Override
-	public void remove(RssItem item) throws RepositoryException {
-		List<RssItem> helper = new ArrayList<>();
-		helper.add(item);
-		
+	public void remove(String id) throws RepositoryException {
+		List<String> helper = new ArrayList<>();
+		helper.add(id);
+
 		remove(helper);
 	}
 
 	@Override
-	public void remove(Iterable<RssItem> items) throws RepositoryException {
-		
+	public void remove(Iterable<String> ids) throws RepositoryException {
+
 	}
 
 	@Override
 	public List<RssItem> query(RssItem filter) throws RepositoryException {
-		
-		
+
 		return null;
 	}
 }
