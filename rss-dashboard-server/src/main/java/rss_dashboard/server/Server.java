@@ -30,7 +30,7 @@ public class Server {
 	public void start() throws IOException {
 		httpServer.start();
 		System.out.println(String.format(
-				"Http server started. WADL available at %s/application.wadl", properties.getProperty("baseUrl")));
+				"Http server started. WADL available at %s/application.wadl.", properties.getProperty("baseUrl")));
 	}
 
 	public void stop() {

@@ -9,11 +9,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import rss_dashboard.common.model.rss.IRssItem;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.PROPERTY)
 @Getter
+@Setter
 @NoArgsConstructor
 public class RssItem extends RssElement implements IRssItem {
 	private String author;

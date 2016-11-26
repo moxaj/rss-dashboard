@@ -15,18 +15,22 @@ public abstract class AbstractHttpServlet {
 
 	protected final String getBasicAuthorization() {
 		String authorization = request.getHeader("Authorization");
-		return authorization == null || !authorization.startsWith("Basic ")
+
+		return authorization == null || !authorization.startsWith("Basic ") 
 				? null
 				: authorization.substring("Basic ".length());
 	}
 
 	protected final ClientProfile getClientProfile() {
 		String token = getBasicAuthorization();
+
 		if (token == null) {
 			return null;
 		}
 
+		// fetch client data from database based on token
 		// TODO
+		
 		return new ClientProfile();
 	}
 }

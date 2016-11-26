@@ -9,15 +9,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import rss_dashboard.common.model.rss.IRssChannel;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Getter
+@Setter
 @NoArgsConstructor
 public class RssChannel extends RssElement implements IRssChannel {
 	private String language;
-
 	private String imageUrl;
 
 	@Builder

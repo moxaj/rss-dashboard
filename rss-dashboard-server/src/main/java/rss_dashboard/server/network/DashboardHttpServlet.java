@@ -26,6 +26,7 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 			@QueryParam("dateTill") long dateTill,
 			@QueryParam("categories") String categoriesStr) {
 		ClientProfile profile = getClientProfile();
+		
 		if (profile == null) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
