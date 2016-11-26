@@ -1,5 +1,6 @@
 package rss_dashboard.server.model.rss;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,5 +25,5 @@ public abstract class RssElement implements IRssElement {
 	private String link;
 	private String description;
 	private List<String> categories;
-	private String pubDate;
+	private LocalDate pubDate;
 }

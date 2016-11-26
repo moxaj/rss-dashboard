@@ -13,9 +13,9 @@ import rss_dashboard.server.model.misc.ClientProfile;
 
 public class ClientProfileRepository extends AbstractRepository implements IRepository<ClientProfile> {
 	private String SQL_ADD = "INSERT INTO clients " + "(id, email, token1, expiration, token2, provider) "
-			+ "VALUES ('?', '?', '?', '?', '?', '?')";
+			+ "VALUES ('?', '?', '?', TIMESTAMP('?'), '?', '?')";
 	private String SQL_UPDATE = "UPDATE clients " + "SET email = '?', " + "token1 = '?', "
-			+ "expiration = TIMESTAMP('?'), " + "token2 = '?' " + "provider = '?' " + "WHERE id = '?'";
+			+ "expiration = TIMESTAMP('?'), " + "token2 = '?', " + "provider = '?' " + "WHERE id = '?'";
 	private String SQL_DELETE = "DELETE FROM clients " + "WHERE id = '?'";
 	private String SQL_SELECT = "SELECT * " + "FROM clients " + "WHERE id = '?' OR " + "email = '?' OR "
 			+ "token1 = '?' OR " + "token2 = '?'";
@@ -85,8 +85,8 @@ public class ClientProfileRepository extends AbstractRepository implements IRepo
 				AuthorizationProviders p5 = item.getProvider();
 				String p6 = item.getId();
 
-				if (p6 == null) {
-					throw new RepositoryException("Id is null.");
+				if (p6 == null || p6.isEmpty()) {
+					throw new RepositoryException("Id is null or empty.");
 				}
 
 				statement.setString(1, p1 != null ? p1 : "");

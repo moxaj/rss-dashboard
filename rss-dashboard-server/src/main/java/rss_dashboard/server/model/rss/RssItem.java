@@ -1,5 +1,6 @@
 package rss_dashboard.server.model.rss;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -21,8 +22,8 @@ public class RssItem extends RssElement implements IRssItem {
 	private String author;
 
 	@Builder
-	private RssItem(String id, String title, String link, String description, List<String> categories, String pubDate,
-			String author) {
+	private RssItem(String id, String title, String link, String description, List<String> categories,
+			LocalDate pubDate, String author) {
 		super(id, title, link, description, categories, pubDate);
 		this.author = author;
 	}
