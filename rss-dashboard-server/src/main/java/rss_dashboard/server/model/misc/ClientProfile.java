@@ -12,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class ClientProfile {
+	private String id;
 	private String email;
-	private String token;
+	private String token1;
+	private String token2;
 }

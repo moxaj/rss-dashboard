@@ -1,49 +1,54 @@
 package rss_dashboard.server.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rss_dashboard.server.model.dashboard.DashboardElement;
 
-public class DashboardElementRepository implements IRepository<DashboardElement> {
+public class DashboardElementRepository extends AbstractRepository implements IRepository<DashboardElement> {
 	@Override
-	public void add(DashboardElement item) {
-		// TODO Auto-generated method stub
-
+	public void add(DashboardElement item) throws RepositoryException {
+		List<DashboardElement> helper = new ArrayList<>();
+		helper.add(item);
+		
+		add(helper);
 	}
 
 	@Override
-	public void add(Iterable<DashboardElement> items) {
-		// TODO Auto-generated method stub
-
+	public void add(Iterable<DashboardElement> items) throws RepositoryException {
+		
 	}
 
 	@Override
-	public void update(DashboardElement item) {
-		// TODO Auto-generated method stub
-
+	public void update(DashboardElement item) throws RepositoryException {
+		List<DashboardElement> helper = new ArrayList<>();
+		helper.add(item);
+		
+		update(helper);
 	}
 
 	@Override
-	public void update(Iterable<DashboardElement> items) {
-		// TODO Auto-generated method stub
-
+	public void update(Iterable<DashboardElement> items) throws RepositoryException {
+		
 	}
 
 	@Override
-	public void remove(DashboardElement item) {
-		// TODO Auto-generated method stub
-
+	public void remove(DashboardElement item) throws RepositoryException {
+		List<DashboardElement> helper = new ArrayList<>();
+		helper.add(item);
+		
+		remove(helper);
 	}
 
 	@Override
-	public void remove(Iterable<DashboardElement> items) {
-		// TODO Auto-generated method stub
-
+	public void remove(Iterable<DashboardElement> items) throws RepositoryException {
+		
 	}
 
 	@Override
-	public List<DashboardElement> query(String filter) {
-		// TODO Auto-generated method stub
+	public List<DashboardElement> query(DashboardElement filter) throws RepositoryException {
+		
+		
 		return null;
 	}
 }

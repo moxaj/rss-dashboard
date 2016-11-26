@@ -1,49 +1,54 @@
 package rss_dashboard.server.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rss_dashboard.server.model.rss.RssItem;
 
-public class RssItemRepository implements IRepository<RssItem> {
+public class RssItemRepository extends AbstractRepository implements IRepository<RssItem> {
 	@Override
-	public void add(RssItem item) {
-		// TODO Auto-generated method stub
+	public void add(RssItem item) throws RepositoryException {
+		List<RssItem> helper = new ArrayList<>();
+		helper.add(item);
+		
+		add(helper);
+	}
+
+	@Override
+	public void add(Iterable<RssItem> items) throws RepositoryException {
 		
 	}
 
 	@Override
-	public void add(Iterable<RssItem> items) {
-		// TODO Auto-generated method stub
+	public void update(RssItem item) throws RepositoryException {
+		List<RssItem> helper = new ArrayList<>();
+		helper.add(item);
+		
+		update(helper);
+	}
+
+	@Override
+	public void update(Iterable<RssItem> items) throws RepositoryException {
 		
 	}
 
 	@Override
-	public void update(RssItem item) {
-		// TODO Auto-generated method stub
+	public void remove(RssItem item) throws RepositoryException {
+		List<RssItem> helper = new ArrayList<>();
+		helper.add(item);
+		
+		remove(helper);
+	}
+
+	@Override
+	public void remove(Iterable<RssItem> items) throws RepositoryException {
 		
 	}
 
 	@Override
-	public void update(Iterable<RssItem> items) {
-		// TODO Auto-generated method stub
+	public List<RssItem> query(RssItem filter) throws RepositoryException {
 		
-	}
-
-	@Override
-	public void remove(RssItem item) {
-		// TODO Auto-generated method stub
 		
-	}
-
-	@Override
-	public void remove(Iterable<RssItem> items) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<RssItem> query(String filter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

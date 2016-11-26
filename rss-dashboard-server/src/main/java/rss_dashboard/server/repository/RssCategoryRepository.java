@@ -1,49 +1,54 @@
 package rss_dashboard.server.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import rss_dashboard.server.model.rss.RssCategory;
 
-public class RssCategoryRepository implements IRepository<RssCategory> {
+public class RssCategoryRepository extends AbstractRepository implements IRepository<RssCategory> {
 	@Override
-	public void add(RssCategory item) {
-		// TODO Auto-generated method stub
+	public void add(RssCategory item) throws RepositoryException {
+		List<RssCategory> helper = new ArrayList<>();
+		helper.add(item);
+		
+		add(helper);
+	}
+
+	@Override
+	public void add(Iterable<RssCategory> items) throws RepositoryException {
 		
 	}
 
 	@Override
-	public void add(Iterable<RssCategory> items) {
-		// TODO Auto-generated method stub
+	public void update(RssCategory item) throws RepositoryException {
+		List<RssCategory> helper = new ArrayList<>();
+		helper.add(item);
+		
+		update(helper);
+	}
+
+	@Override
+	public void update(Iterable<RssCategory> items) throws RepositoryException {
 		
 	}
 
 	@Override
-	public void update(RssCategory item) {
-		// TODO Auto-generated method stub
+	public void remove(RssCategory item) throws RepositoryException {
+		List<RssCategory> helper = new ArrayList<>();
+		helper.add(item);
+		
+		remove(helper);
+	}
+
+	@Override
+	public void remove(Iterable<RssCategory> items) throws RepositoryException {
 		
 	}
 
 	@Override
-	public void update(Iterable<RssCategory> items) {
-		// TODO Auto-generated method stub
+	public List<RssCategory> query(RssCategory filter) throws RepositoryException {
 		
-	}
 
-	@Override
-	public void remove(RssCategory item) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void remove(Iterable<RssCategory> items) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<RssCategory> query(String filter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

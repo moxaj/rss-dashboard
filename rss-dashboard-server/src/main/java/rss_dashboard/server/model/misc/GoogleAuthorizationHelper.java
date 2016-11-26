@@ -8,9 +8,13 @@ import javax.net.ssl.HttpsURLConnection;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
+
+import rss_dashboard.server.repository.ClientProfileRepository;
+import rss_dashboard.server.repository.RepositoryException;
 
 public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 	@Override
@@ -45,7 +49,26 @@ public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 		String rToken = tokenResponse.getRefreshToken();
 
 		// store tokens and bind these to a user
-		// TODO
+		GoogleIdToken idToken = null;
+		
+		try {
+			idToken = tokenResponse.parseIdToken();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new AuthorizationException("id_token_parse_remote_error");
+		}
+		
+		GoogleIdToken.Payload payload = idToken.getPayload();
+		
+		try {
+			new ClientProfileRepository().add(ClientProfile.builder()
+												.email(payload.getEmail())
+												.token1(aToken)
+												.token2(rToken).build());
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new AuthorizationException("client_persist_error");
+		}
 
 		return aToken;
 	}
@@ -54,24 +77,34 @@ public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 	public void deauthorize(String data) throws AuthorizationException {
 		// expected: data = access token
 
+		HttpsURLConnection connection = null;
+		
 		try {
 			URL url = new URL("https://www.googleapis.com/oauth2/v4/revoke?token=" + data);
 
-			HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+			connection = (HttpsURLConnection) url.openConnection();
 			connection.setRequestMethod("GET");
 
 			if (connection.getResponseCode() != 200) {
-				connection.disconnect();
 				throw new AuthorizationException("not_good_response_code");
 			}
 
-			// delete access token from database
-			// TODO
-
-			connection.disconnect();
+			// delete client from database
+			try {
+				new ClientProfileRepository().add(ClientProfile.builder()
+													.token1(data).build());
+			} catch (RepositoryException e) {
+				e.printStackTrace();
+				throw new AuthorizationException("client_delete_error");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new AuthorizationException("remote_error");
+		} finally {
+			if (connection != null) {
+				connection.disconnect();
+				connection = null;
+			}
 		}
 	}
 }
