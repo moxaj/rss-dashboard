@@ -10,26 +10,13 @@ CREATE TABLE clients(
 
 CREATE TABLE rss_channels(
 	id VARCHAR(128) PRIMARY KEY,
-	title VARCHAR(32),
-	link VARCHAR(128),
-	description VARCHAR(256),
-	pubDate DATE,
-	language VARCHAR(32),
-	imageUrl VARCHAR(128)
-);
-
-CREATE TABLE rss_categories(
-	id VARCHAR(128) PRIMARY KEY,
-	category VARCHAR(32),
-	rss_element_id VARCHAR(128)
+	link VARCHAR(128)
 );
 
 CREATE TABLE dashboard_elements(
 	id VARCHAR(128) PRIMARY KEY,
-	x INT,
-	y INT,
-	w INT,
-	h INT,
+	row INT,
+	column INT,
 	page INT,
 	client_id VARCHAR(128),
 	rss_channel_id VARCHAR(128));
