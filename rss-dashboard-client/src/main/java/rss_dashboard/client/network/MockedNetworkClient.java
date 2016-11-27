@@ -48,14 +48,6 @@ public class MockedNetworkClient implements INetworkClient {
 	}
 
 	@Override
-	public CompletableFuture<Boolean> doKeepAlive(String token) {
-		return CompletableFuture.supplyAsync(() -> {
-			sleep();
-			return true;
-		}, EXECUTOR);
-	}
-
-	@Override
 	public CompletableFuture<IRssChannel> getRssChannel(String token, String id) {
 		return CompletableFuture.supplyAsync(() -> {
 			sleep();

@@ -49,7 +49,6 @@ public class HttpClient implements INetworkClient {
 
 	private final GenericUrl miscLoginUrl;
 	private final GenericUrl miscLogoutUrl;
-	private final GenericUrl miscKeepAliveUrl;
 	private final GenericUrl rssChannelUrl;
 	private final GenericUrl rssItemUrl;
 	private final GenericUrl rssChannelMappingUrl;
@@ -58,7 +57,6 @@ public class HttpClient implements INetworkClient {
 	public HttpClient(String baseUrlString) throws MalformedURLException {
 		miscLoginUrl = new GenericUrl(new URL(baseUrlString + "/misc/login"));
 		miscLogoutUrl = new GenericUrl(new URL(baseUrlString + "/misc/logout"));
-		miscKeepAliveUrl = new GenericUrl(new URL(baseUrlString + "/misc/keepalive"));
 		rssChannelUrl = new GenericUrl(new URL(baseUrlString + "/rss/channels"));
 		rssItemUrl = new GenericUrl(new URL(baseUrlString + "/rss/items"));
 		rssChannelMappingUrl = new GenericUrl(new URL(baseUrlString + "/rss/channel_mapping"));
@@ -86,19 +84,6 @@ public class HttpClient implements INetworkClient {
 				request.getHeaders().setAuthorization(String.format("Basic %s", token));
 				request.execute();
 				return null;
-			} catch (Throwable e) {
-				throw new CompletionException(e);
-			}
-		}, EXECUTOR);
-	}
-
-	@Override
-	public CompletableFuture<Boolean> doKeepAlive(String token) {
-		return CompletableFuture.supplyAsync(() -> {
-			try {
-				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(miscKeepAliveUrl);
-				request.getHeaders().setAuthorization(String.format("Basic %s", token));
-				return "true".equals(request.execute().parseAsString());
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
