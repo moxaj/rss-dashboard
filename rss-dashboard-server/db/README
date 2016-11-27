@@ -1,0 +1,11 @@
+To create and initialize the database for the application, 
+	1.) open a command prompt
+	2.) navigate to the db folder
+	3.) run initDB.cmd with the following arguments
+			a.) "%JAVA_HOME%" if you have set the JAVA_HOME environment variable, and it points to the JDK's root folder
+					for example: initDB.cmd "%JAVA_HOME%"
+			b.) JDK's root folder, otherwise
+					for example: initDB.cmd "C:\Program Files\Java\JDK\"
+	4.) wait while it is finishing its job (some seconds)
+	
+IMPORTANT: initDB.cmd must be run at its original location (see step 2)!
