@@ -10,12 +10,12 @@ import rss_dashboard.server.model.rss.RssCategory;
 
 public class RssCategoryRepository extends AbstractRepository implements IRepository<RssCategory> {
 	private String SQL_ADD = "INSERT INTO rss_categories " + "(id, category, rss_element_id) "
-			+ "VALUES ('?', '?', '?')";
-	private String SQL_UPDATE = "UPDATE rss_categories " + "SET category = '?', " + "rss_element_id = '?' "
-			+ "WHERE id = '?'";
-	private String SQL_DELETE = "DELETE FROM rss_categories " + "WHERE id = '?'";
-	private String SQL_SELECT = "SELECT * " + "FROM rss_categories " + "WHERE id = '?' OR " + "category = '?' OR "
-			+ "rss_element_id = '?'";
+			+ "VALUES (?, ?, ?)";
+	private String SQL_UPDATE = "UPDATE rss_categories " + "SET category = ?, " + "rss_element_id = ? "
+			+ "WHERE id = ?";
+	private String SQL_DELETE = "DELETE FROM rss_categories " + "WHERE id = ?";
+	private String SQL_SELECT = "SELECT * " + "FROM rss_categories " + "WHERE id = ? OR " + "category = ? OR "
+			+ "rss_element_id = ?";
 
 	@Override
 	public void add(RssCategory item) throws RepositoryException {

@@ -13,12 +13,12 @@ import rss_dashboard.server.model.misc.ClientProfile;
 
 public class ClientProfileRepository extends AbstractRepository implements IRepository<ClientProfile> {
 	private String SQL_ADD = "INSERT INTO clients " + "(id, email, token1, expiration, token2, provider) "
-			+ "VALUES ('?', '?', '?', TIMESTAMP('?'), '?', '?')";
-	private String SQL_UPDATE = "UPDATE clients " + "SET email = '?', " + "token1 = '?', "
-			+ "expiration = TIMESTAMP('?'), " + "token2 = '?', " + "provider = '?' " + "WHERE id = '?'";
-	private String SQL_DELETE = "DELETE FROM clients " + "WHERE id = '?'";
-	private String SQL_SELECT = "SELECT * " + "FROM clients " + "WHERE id = '?' OR " + "email = '?' OR "
-			+ "token1 = '?' OR " + "token2 = '?'";
+			+ "VALUES (?, ?, ?, ?, ?, ?)";
+	private String SQL_UPDATE = "UPDATE clients " + "SET email = ?, " + "token1 = ?, "
+			+ "expiration = ?, " + "token2 = ?, " + "provider = ? " + "WHERE id = ?";
+	private String SQL_DELETE = "DELETE FROM clients " + "WHERE id = ?";
+	private String SQL_SELECT = "SELECT * " + "FROM clients " + "WHERE id = ? OR " + "email = ? OR "
+			+ "token1 = ? OR " + "token2 = ?";
 
 	@Override
 	public void add(ClientProfile item) throws RepositoryException {

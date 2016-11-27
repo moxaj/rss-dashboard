@@ -10,12 +10,12 @@ import rss_dashboard.server.model.dashboard.DashboardElement;
 
 public class DashboardElementRepository extends AbstractRepository implements IRepository<DashboardElement> {
 	private String SQL_ADD = "INSERT INTO dashboard_elements " + "(id, x, y, w, h, page, client_id, rss_channel_id) "
-			+ "VALUES ('?', '?', '?', '?', '?', '?', '?', '?')";
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 	private String SQL_UPDATE = "UPDATE dashboard_elements " + "SET x = ?, " + "y = ?, " + "w = ?, " + "h = ?, "
-			+ "page = ?, " + "client_id = '?', " + "rss_channel_id = '?' " + "WHERE id = '?'";
-	private String SQL_DELETE = "DELETE FROM dashboard_elements " + "WHERE id = '?'";
-	private String SQL_SELECT = "SELECT * " + "FROM dashboard_elements " + "WHERE id = '?' OR " + "client_id = '?' OR "
-			+ "rss_channel_id = '?'";
+			+ "page = ?, " + "client_id = ?, " + "rss_channel_id = ? " + "WHERE id = ?";
+	private String SQL_DELETE = "DELETE FROM dashboard_elements " + "WHERE id = ?";
+	private String SQL_SELECT = "SELECT * " + "FROM dashboard_elements " + "WHERE id = ? OR " + "client_id = ? OR "
+			+ "rss_channel_id = ?";
 
 	@Override
 	public void add(DashboardElement item) throws RepositoryException {

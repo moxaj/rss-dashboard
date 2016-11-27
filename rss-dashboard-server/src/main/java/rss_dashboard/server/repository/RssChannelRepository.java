@@ -13,11 +13,11 @@ import rss_dashboard.server.model.rss.RssChannel;
 public class RssChannelRepository extends AbstractRepository implements IRepository<RssChannel> {
 	private String SQL_ADD = "INSERT INTO rss_channels "
 			+ "(id, title, link, description, pubDate, language, imageUrl) "
-			+ "VALUES ('?', '?', '?', '?', DATE('?'), '?', '?')";
-	private String SQL_UPDATE = "UPDATE rss_channels " + "SET title = '?', " + "link = '?', " + "description = '?', "
-			+ "pubDate = DATE('?'), " + "language = '?', " + "imageUrl = '?' " + "WHERE id = '?'";
+			+ "VALUES (?, ?, ?, ?, ?, ?, ?)";
+	private String SQL_UPDATE = "UPDATE rss_channels " + "SET title = ?, " + "link = ?, " + "description = ?, "
+			+ "pubDate = ?, " + "language = ?, " + "imageUrl = ? " + "WHERE id = ?";
 	private String SQL_DELETE = "DELETE FROM rss_channels " + "WHERE id = '?'";
-	private String SQL_SELECT = "SELECT * " + "FROM rss_channels " + "WHERE id = '?'";
+	private String SQL_SELECT = "SELECT * " + "FROM rss_channels " + "WHERE id = ?";
 
 	@Override
 	public void add(RssChannel item) throws RepositoryException {
