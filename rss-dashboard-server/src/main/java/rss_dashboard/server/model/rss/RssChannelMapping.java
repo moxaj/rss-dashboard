@@ -1,7 +1,6 @@
-package rss_dashboard.server.model.dashboard;
+package rss_dashboard.server.model.rss;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -11,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import rss_dashboard.common.model.dashboard.IDashboardMapping;
+import rss_dashboard.common.model.rss.IRssChannelMapping;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -19,6 +18,6 @@ import rss_dashboard.common.model.dashboard.IDashboardMapping;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DashboardMapping implements IDashboardMapping {
-	private Map<String, List<String>> mapping;
+public class RssChannelMapping implements IRssChannelMapping {
+	private List<String> rssItemIds;
 }

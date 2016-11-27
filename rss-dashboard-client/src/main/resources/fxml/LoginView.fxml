@@ -12,7 +12,7 @@
 
 <VBox fx:id="rootPane" alignment="CENTER" onKeyPressed="#handleKeyPressed"
 	prefHeight="107.0" prefWidth="271.0" xmlns="http://javafx.com/javafx/8.0.60"
-	xmlns:fx="http://javafx.com/fxml/1">
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="rss_dashboard.client.controller.LoginController">
 	<children>
 		<GridPane prefHeight="78.0" prefWidth="248.0">
 			<columnConstraints>

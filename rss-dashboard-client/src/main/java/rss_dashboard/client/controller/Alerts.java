@@ -1,18 +1,15 @@
-package rss_dashboard.client.view;
+package rss_dashboard.client.controller;
 
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
 public class Alerts {
 	public static void showErrorAlert(String headerText, String contentText) {
-		Platform.runLater(() -> {
-			Alert alert = new Alert(AlertType.ERROR);
-			alert.setResizable(false);
-			alert.setHeaderText(headerText);
-			alert.setContentText(contentText);
-			alert.show();
-		});
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setResizable(false);
+		alert.setHeaderText(headerText);
+		alert.setContentText(contentText);
+		alert.show();
 	}
 
 	public static void showServerUnavailableAlert() {

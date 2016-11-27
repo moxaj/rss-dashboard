@@ -10,10 +10,10 @@ import javax.ws.rs.core.MediaType;
 
 import org.glassfish.grizzly.http.util.HttpStatus;
 
-import rss_dashboard.common.model.dashboard.IDashboardMapping;
 import rss_dashboard.common.model.dashboard.IDashboardLayout;
-import rss_dashboard.server.model.dashboard.DashboardMapping;
+import rss_dashboard.common.model.dashboard.IDashboardMapping;
 import rss_dashboard.server.model.dashboard.DashboardLayout;
+import rss_dashboard.server.model.dashboard.DashboardMapping;
 import rss_dashboard.server.model.misc.ClientProfile;
 
 @Path("/dashboard")
@@ -21,10 +21,7 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 	@GET
 	@Path("/mapping")
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public IDashboardMapping getDashboardMapping(
-			@QueryParam("dateFrom") long dateFrom,
-			@QueryParam("dateTill") long dateTill,
-			@QueryParam("categories") String categoriesStr) {
+	public IDashboardMapping getDashboardMapping() {
 		ClientProfile profile = getClientProfile();
 		if (profile == null) {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);

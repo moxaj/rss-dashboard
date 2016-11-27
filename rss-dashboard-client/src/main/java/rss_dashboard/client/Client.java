@@ -6,20 +6,17 @@ import java.net.MalformedURLException;
 import java.util.Properties;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import rss_dashboard.client.network.HttpClient;
+import rss_dashboard.client.controller.LoginController;
+import rss_dashboard.client.controller.MainController;
 import rss_dashboard.client.network.INetworkClient;
-import rss_dashboard.client.view.login.LoginViewController;
-import rss_dashboard.client.view.main.MainViewController;
+import rss_dashboard.client.network.MockedNetworkClient;
 
 public class Client extends Application {
-	public static final boolean DEBUG = false;
-
 	private final Properties properties;
 	private final INetworkClient networkClient;
 
@@ -32,17 +29,15 @@ public class Client extends Application {
 		}
 
 		try {
-			networkClient = new HttpClient(properties.getProperty("baseUrl"));
+			networkClient = new MockedNetworkClient();
+			// new HttpClient(properties.getProperty("baseUrl"));
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("Malformed server url!", e);
 		}
 	}
 
 	private void showLoginScene() {
-		FXMLLoader loader = new FXMLLoader(LoginViewController.class.getResource("LoginView.fxml"));
-
-		LoginViewController controller = new LoginViewController(networkClient);
-		loader.setController(controller);
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LoginView.fxml"));
 
 		Pane pane;
 		try {
@@ -50,6 +45,9 @@ public class Client extends Application {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
+		LoginController controller = loader.getController();
+		controller.setNetworkClient(networkClient);
 
 		Stage loginStage = new Stage();
 		loginStage.setTitle("Sign in with Google credentials");
@@ -58,7 +56,7 @@ public class Client extends Application {
 		loginStage.setScene(new Scene(pane));
 		loginStage.setOnCloseRequest(event -> {
 			String token = controller.getToken();
-			if (token != null || DEBUG) {
+			if (token != null) {
 				showMainScene(token);
 			}
 		});
@@ -66,10 +64,7 @@ public class Client extends Application {
 	}
 
 	private void showMainScene(String token) {
-		FXMLLoader loader = new FXMLLoader(MainViewController.class.getResource("MainView.fxml"));
-
-		MainViewController controller = new MainViewController(networkClient, token);
-		loader.setController(controller);
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainView.fxml"));
 
 		Pane pane;
 		try {
@@ -78,12 +73,18 @@ public class Client extends Application {
 			throw new RuntimeException(e);
 		}
 
+		MainController controller = loader.getController();
+		controller.setNetworkClient(networkClient);
+		controller.setToken(token);
+		controller.load();
+
 		Stage mainStage = new Stage();
 		mainStage.setScene(new Scene(pane));
 		mainStage.setTitle("RSS Dashboard Reader");
 		mainStage.centerOnScreen();
 		mainStage.initStyle(StageStyle.UNIFIED);
 		mainStage.setOnCloseRequest(event -> {
+			controller.shutdown();
 			if (controller.doPromptLogin()) {
 				showLoginScene();
 			}

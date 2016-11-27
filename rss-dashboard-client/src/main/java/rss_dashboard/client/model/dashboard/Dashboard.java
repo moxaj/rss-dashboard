@@ -9,13 +9,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import rss_dashboard.common.model.dashboard.IDashboardMapping;
+import lombok.Setter;
+import rss_dashboard.common.model.dashboard.IDashboard;
+import rss_dashboard.common.model.dashboard.Position;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DashboardMapping implements IDashboardMapping {
+public class Dashboard implements IDashboard {
 	@Key
-	private Map<String, List<String>> mapping;
+	private int width;
+	@Key
+	private int height;
+	@Key
+	private List<Map<String, Position>> layout;
 }

@@ -1,9 +1,9 @@
 package rss_dashboard.client.network;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 import com.google.api.client.http.EmptyContent;
 import com.google.api.client.http.GenericUrl;
@@ -17,13 +17,13 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.ObjectParser;
 
-import rss_dashboard.client.model.dashboard.DashboardMapping;
-import rss_dashboard.client.model.dashboard.DashboardLayout;
+import rss_dashboard.client.model.dashboard.Dashboard;
 import rss_dashboard.client.model.rss.RssChannel;
+import rss_dashboard.client.model.rss.RssChannelMapping;
 import rss_dashboard.client.model.rss.RssItem;
-import rss_dashboard.common.model.dashboard.IDashboardMapping;
-import rss_dashboard.common.model.dashboard.IDashboardLayout;
+import rss_dashboard.common.model.dashboard.IDashboard;
 import rss_dashboard.common.model.rss.IRssChannel;
+import rss_dashboard.common.model.rss.IRssChannelMapping;
 import rss_dashboard.common.model.rss.IRssItem;
 
 public class HttpClient implements INetworkClient {
@@ -35,7 +35,7 @@ public class HttpClient implements INetworkClient {
 		HttpTransport httpTransport = new NetHttpTransport();
 		HTTP_REQUEST_FACTORY = httpTransport.createRequestFactory(new HttpRequestInitializer() {
 			@Override
-			public void initialize(HttpRequest request) throws IOException {
+			public void initialize(HttpRequest request) {
 				request.setParser(objectParser);
 				request.getHeaders().setAccept("application/json");
 				request.getHeaders().setContentType("application/json");
@@ -44,91 +44,138 @@ public class HttpClient implements INetworkClient {
 		});
 	}
 
-	private final GenericUrl loginUrl;
-	private final GenericUrl logoutUrl;
-	private final GenericUrl keepAliveUrl;
+	private final GenericUrl miscLoginUrl;
+	private final GenericUrl miscLogoutUrl;
+	private final GenericUrl miscKeepAliveUrl;
 	private final GenericUrl rssChannelUrl;
 	private final GenericUrl rssItemUrl;
-	private final GenericUrl dashboardMappingUrl;
+	private final GenericUrl rssChannelMappingUrl;
 	private final GenericUrl dashboardLayoutUrl;
 
 	public HttpClient(String baseUrlString) throws MalformedURLException {
-		loginUrl = new GenericUrl(new URL(baseUrlString + "/misc/login"));
-		logoutUrl = new GenericUrl(new URL(baseUrlString + "/misc/logout"));
-		keepAliveUrl = new GenericUrl(new URL(baseUrlString + "/misc/keepalive"));
+		miscLoginUrl = new GenericUrl(new URL(baseUrlString + "/misc/login"));
+		miscLogoutUrl = new GenericUrl(new URL(baseUrlString + "/misc/logout"));
+		miscKeepAliveUrl = new GenericUrl(new URL(baseUrlString + "/misc/keepalive"));
 		rssChannelUrl = new GenericUrl(new URL(baseUrlString + "/rss/channels"));
 		rssItemUrl = new GenericUrl(new URL(baseUrlString + "/rss/items"));
-		dashboardMappingUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/mapping"));
+		rssChannelMappingUrl = new GenericUrl(new URL(baseUrlString + "/rss/channel_mapping"));
 		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/layout"));
 	}
 
 	@Override
-	public String login(String username, String password) throws IOException {
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildPostRequest(loginUrl, new EmptyContent());
-		request.getHeaders().setAuthorization(String.format("Basic %s;%s", username, password));
-		return request.execute().parseAsString();
+	public CompletableFuture<String> login(String username, String password) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				HttpRequest request = HTTP_REQUEST_FACTORY.buildPostRequest(miscLoginUrl, new EmptyContent());
+				request.getHeaders().setAuthorization(String.format("Basic %s;%s", username, password));
+				return request.execute().parseAsString();
+			} catch (Throwable e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 
 	@Override
-	public void logout(String token) throws IOException {
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildPostRequest(logoutUrl, new EmptyContent());
-		request.getHeaders().setAuthorization(String.format("Basic %s", token));
-		request.execute();
+	public CompletableFuture<Void> logout(String token) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				HttpRequest request = HTTP_REQUEST_FACTORY.buildPostRequest(miscLogoutUrl, new EmptyContent());
+				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				request.execute();
+				return null;
+			} catch (Throwable e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 
 	@Override
-	public boolean doKeepAlive(String token) throws IOException {
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(keepAliveUrl);
-		request.getHeaders().setAuthorization(String.format("Basic %s", token));
-		return "true".equals(request.execute().parseAsString());
+	public CompletableFuture<Boolean> doKeepAlive(String token) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(miscKeepAliveUrl);
+				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				return "true".equals(request.execute().parseAsString());
+			} catch (Throwable e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 
 	@Override
-	public IRssChannel getRssChannel(String token, String id) throws IOException {
-		rssChannelUrl.set("id", id);
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(rssChannelUrl);
-		request.getHeaders().setAuthorization(String.format("Basic %s", token));
-		return request.execute().parseAs(RssChannel.class);
+	public CompletableFuture<IRssChannel> getRssChannel(String token, String id) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				rssChannelUrl.set("id", id);
+				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(rssChannelUrl);
+				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				return request.execute().parseAs(RssChannel.class);
+			} catch (Throwable e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 
 	@Override
-	public IRssItem getRssItem(String token, String id) throws IOException {
-		rssItemUrl.set("id", id);
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(rssItemUrl);
-		request.getHeaders().setAuthorization(String.format("Basic %s", token));
-		return request.execute().parseAs(RssItem.class);
+	public CompletableFuture<IRssItem> getRssItem(String token, String id) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				rssItemUrl.set("id", id);
+				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(rssItemUrl);
+				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				return request.execute().parseAs(RssItem.class);
+			} catch (Throwable e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 
 	@Override
-	public IDashboardMapping getDashboardMapping(String token, long dateFrom, long dateTill, List<String> categories)
-			throws IOException {
-		dashboardMappingUrl.set("dateFrom", dateFrom);
-		dashboardMappingUrl.set("dateTill", dateTill);
-		dashboardMappingUrl.set("categories", String.join("/", categories));
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardMappingUrl);
-		request.getHeaders().setAuthorization(String.format("Basic %s", token));
-		return request.execute().parseAs(DashboardMapping.class);
+	public CompletableFuture<IRssChannelMapping> getRssChannelMapping(String token, String id) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				rssChannelMappingUrl.set("id", id);
+				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(rssChannelMappingUrl);
+				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				return request.execute().parseAs(RssChannelMapping.class);
+			} catch (Throwable e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 
 	@Override
-	public IDashboardLayout getDashboardLayout(String token) throws IOException {
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardLayoutUrl);
-		request.getHeaders().setAuthorization(String.format("Basic %s", token));
-		return request.execute().parseAs(DashboardLayout.class);
+	public CompletableFuture<IDashboard> getDashboard(String token) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardLayoutUrl);
+				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				return request.execute().parseAs(Dashboard.class);
+			} catch (Throwable e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 
 	@Override
-	public void modifyDashboardLayout(String token, int pageId, int rowId, int columnId, String feedUrl)
-			throws IOException {
-		dashboardLayoutUrl.set("pageId", pageId);
-		dashboardLayoutUrl.set("rowId", rowId);
-		dashboardLayoutUrl.set("columnId", columnId);
-		dashboardLayoutUrl.set("feedUrl", feedUrl);
-		HttpRequest request = HTTP_REQUEST_FACTORY.buildRequest(
-				feedUrl == null ? "DELETE" : "POST",
-				dashboardLayoutUrl,
-				new EmptyContent());
-		request.getHeaders().setAuthorization(String.format("Basic %s", token));
-		request.execute();
+	public CompletableFuture<Void> modifyDashboardLayout(String token, int pageId, int rowId, int columnId,
+			String feedUrl) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				dashboardLayoutUrl.set("pageId", pageId);
+				dashboardLayoutUrl.set("rowId", rowId);
+				dashboardLayoutUrl.set("columnId", columnId);
+				dashboardLayoutUrl.set("feedUrl", feedUrl);
+				HttpRequest request = HTTP_REQUEST_FACTORY.buildRequest(
+						feedUrl == null ? "DELETE" : "POST",
+						dashboardLayoutUrl,
+						new EmptyContent());
+				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				request.execute();
+				return null;
+			} catch (Throwable e) {
+				throw new CompletionException(e);
+			}
+		});
 	}
 }

@@ -17,7 +17,6 @@ import rss_dashboard.common.model.rss.IRssChannel;
 @NoArgsConstructor
 public class RssChannel extends RssElement implements IRssChannel {
 	private String language;
-
 	private String imageUrl;
 
 	@Builder

@@ -1,5 +1,7 @@
 package rss_dashboard.server.network;
 
+import java.util.Arrays;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -28,7 +30,15 @@ public class RssHttpServlet extends AbstractHttpServlet {
 		}
 
 		// TODO
-		return RssChannel.builder().build();
+		return RssChannel
+				.builder()
+				.categories(Arrays.asList(new String[] { "IT", "Tech", "Programming" }))
+				.title("The title")
+				.description("The description")
+				.language("hu")
+				.pubDate("2011.03.03")
+				.link("www.google.hu")
+				.build();
 	}
 
 	@GET

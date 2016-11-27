@@ -1,7 +1,4 @@
-package rss_dashboard.client.view.login;
-
-import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
+package rss_dashboard.client.controller;
 
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpStatusCodes;
@@ -14,15 +11,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import rss_dashboard.client.network.INetworkLoginClient;
-import rss_dashboard.client.view.Alerts;
+import rss_dashboard.client.network.ILoginNetworkClient;
 
-public class LoginViewController {
-	@FXML
-	private Pane rootPane;
+public class LoginController extends AbstractController {
 	@FXML
 	private TextField emailTextField;
 	@FXML
@@ -30,10 +23,10 @@ public class LoginViewController {
 	@FXML
 	private Button loginButton;
 
-	private final INetworkLoginClient networkClient;
+	private ILoginNetworkClient networkClient;
 	private String token;
 
-	public LoginViewController(INetworkLoginClient networkClient) {
+	public void setNetworkClient(ILoginNetworkClient networkClient) {
 		this.networkClient = networkClient;
 	}
 
@@ -43,7 +36,7 @@ public class LoginViewController {
 
 	@FXML
 	protected void initialize() {
-		updateLoginButton();
+		loginButton.setDisable(true);
 
 		ChangeListener<? super String> listener = (observable, oldValue, newValue) -> {
 			updateLoginButton();
@@ -61,46 +54,31 @@ public class LoginViewController {
 		loginButton.setDisable(!isLoginEnabled());
 	}
 
-	private void disableInputs(boolean disable) {
-		Platform.runLater(() -> {
-			rootPane.setDisable(disable);
-		});
-	}
-
 	private void close() {
-		Platform.runLater(() -> {
-			Stage stage = (Stage) rootPane.getScene().getWindow();
-			stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-		});
+		Stage stage = (Stage) rootPane.getScene().getWindow();
+		stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
 	}
 
 	private void login() {
-		if (networkClient == null) {
-			throw new RuntimeException("LoginViewController: INetworkLoginClient not set!");
-		}
+		runTask(networkClient
+				.login(emailTextField.getText(), passwordTextField.getText())
+				.exceptionally(ex -> {
+					Throwable cause = ex.getCause();
+					if (cause instanceof HttpResponseException) {
+						if (((HttpResponseException) ex)
+								.getStatusCode() == HttpStatusCodes.STATUS_CODE_UNAUTHORIZED) {
+							Alerts.showErrorAlert("Invalid credentials!",
+									"Please verify your email / password combination.");
+							return null;
+						}
+					}
 
-		CompletableFuture.runAsync(() -> {
-			disableInputs(true);
-
-			try {
-				token = networkClient.login(emailTextField.getText(), passwordTextField.getText());
-				close();
-			} catch (HttpResponseException e) {
-				switch (e.getStatusCode()) {
-				case HttpStatusCodes.STATUS_CODE_UNAUTHORIZED:
-					Alerts.showErrorAlert("Invalid credentials!",
-							"Please verify your email / password combination.");
-					break;
-				default:
 					Alerts.showServerUnavailableAlert();
-					break;
-				}
-			} catch (IOException e) {
-				Alerts.showServerUnavailableAlert();
-			}
-
-			disableInputs(false);
-		});
+					return null;
+				}).thenAcceptAsync(token -> {
+					this.token = token;
+					close();
+				}, Platform::runLater));
 	}
 
 	@FXML
