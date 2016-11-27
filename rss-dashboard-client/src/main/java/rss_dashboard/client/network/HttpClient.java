@@ -4,6 +4,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.api.client.http.EmptyContent;
 import com.google.api.client.http.GenericUrl;
@@ -17,11 +19,11 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.ObjectParser;
 
-import rss_dashboard.client.model.dashboard.DashboardLayout;
+import rss_dashboard.client.model.dashboard.Dashboard;
 import rss_dashboard.client.model.rss.RssChannel;
 import rss_dashboard.client.model.rss.RssChannelMapping;
 import rss_dashboard.client.model.rss.RssItem;
-import rss_dashboard.common.model.dashboard.IDashboardLayout;
+import rss_dashboard.common.model.dashboard.IDashboard;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssChannelMapping;
 import rss_dashboard.common.model.rss.IRssItem;
@@ -29,6 +31,7 @@ import rss_dashboard.common.model.rss.IRssItem;
 public class HttpClient implements INetworkClient {
 	private static final JsonFactory JSON_FACTORY;
 	private static final HttpRequestFactory HTTP_REQUEST_FACTORY;
+	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(64);
 	static {
 		JSON_FACTORY = new GsonFactory();
 		ObjectParser objectParser = new JsonObjectParser(JSON_FACTORY);
@@ -59,7 +62,7 @@ public class HttpClient implements INetworkClient {
 		rssChannelUrl = new GenericUrl(new URL(baseUrlString + "/rss/channels"));
 		rssItemUrl = new GenericUrl(new URL(baseUrlString + "/rss/items"));
 		rssChannelMappingUrl = new GenericUrl(new URL(baseUrlString + "/rss/channel_mapping"));
-		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/layout"));
+		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/dashboard"));
 	}
 
 	@Override
@@ -72,7 +75,7 @@ public class HttpClient implements INetworkClient {
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
-		});
+		}, EXECUTOR);
 	}
 
 	@Override
@@ -86,7 +89,7 @@ public class HttpClient implements INetworkClient {
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
-		});
+		}, EXECUTOR);
 	}
 
 	@Override
@@ -99,7 +102,7 @@ public class HttpClient implements INetworkClient {
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
-		});
+		}, EXECUTOR);
 	}
 
 	@Override
@@ -113,7 +116,7 @@ public class HttpClient implements INetworkClient {
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
-		});
+		}, EXECUTOR);
 	}
 
 	@Override
@@ -127,7 +130,7 @@ public class HttpClient implements INetworkClient {
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
-		});
+		}, EXECUTOR);
 	}
 
 	@Override
@@ -141,20 +144,20 @@ public class HttpClient implements INetworkClient {
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
-		});
+		}, EXECUTOR);
 	}
 
 	@Override
-	public CompletableFuture<IDashboardLayout> getDashboardLayout(String token) {
+	public CompletableFuture<IDashboard> getDashboard(String token) {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardLayoutUrl);
 				request.getHeaders().setAuthorization(String.format("Basic %s", token));
-				return request.execute().parseAs(DashboardLayout.class);
+				return request.execute().parseAs(Dashboard.class);
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
-		});
+		}, EXECUTOR);
 	}
 
 	@Override
@@ -176,6 +179,11 @@ public class HttpClient implements INetworkClient {
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}
-		});
+		}, EXECUTOR);
+	}
+
+	@Override
+	public void shutdown() {
+		EXECUTOR.shutdown();
 	}
 }

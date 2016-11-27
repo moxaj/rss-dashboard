@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import rss_dashboard.client.controller.Alerts;
 import rss_dashboard.client.controller.LoginController;
 import rss_dashboard.client.controller.MainController;
 import rss_dashboard.client.network.INetworkClient;
@@ -20,7 +21,7 @@ public class Client extends Application {
 	private final Properties properties;
 	private final INetworkClient networkClient;
 
-	public Client() {	
+	public Client() {
 		properties = new Properties();
 		try {
 			properties.load(new FileInputStream("src/main/resources/network.properties"));
@@ -47,7 +48,6 @@ public class Client extends Application {
 		}
 
 		LoginController controller = loader.getController();
-		controller.setNetworkClient(networkClient);
 
 		Stage loginStage = new Stage();
 		loginStage.setTitle("Sign in with Google credentials");
@@ -58,6 +58,8 @@ public class Client extends Application {
 			String token = controller.getToken();
 			if (token != null) {
 				showMainScene(token);
+			} else {
+				networkClient.shutdown();
 			}
 		});
 		loginStage.show();
@@ -75,6 +77,7 @@ public class Client extends Application {
 
 		MainController controller = loader.getController();
 		controller.setNetworkClient(networkClient);
+		controller.setHostServices(getHostServices());
 		controller.setToken(token);
 		controller.load();
 
@@ -84,9 +87,14 @@ public class Client extends Application {
 		mainStage.centerOnScreen();
 		mainStage.initStyle(StageStyle.UNIFIED);
 		mainStage.setOnCloseRequest(event -> {
-			controller.shutdown();
-			if (controller.doPromptLogin()) {
-				showLoginScene();
+			if (Alerts.showConfirmationAlert("Would you really like to close the application?", "")) {
+				if (controller.doPromptLogin()) {
+					showLoginScene();
+				} else {
+					networkClient.shutdown();
+				}
+			} else {
+				event.consume();
 			}
 		});
 		mainStage.show();

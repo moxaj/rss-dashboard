@@ -3,16 +3,15 @@ package rss_dashboard.client.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import javafx.application.HostServices;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.SelectionMode;
@@ -27,18 +26,14 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
-import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
+import rss_dashboard.client.network.IAuthenticatedNetworkClient;
 import rss_dashboard.client.network.INetworkClient;
-import rss_dashboard.common.model.dashboard.IDashboardElement;
-import rss_dashboard.common.model.dashboard.IDashboardLayout;
+import rss_dashboard.common.model.dashboard.IDashboard;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssChannelMapping;
 import rss_dashboard.common.model.rss.IRssItem;
 
 public class MainController extends AbstractController {
-	private static final int CACHE_TIMER_PERIOD_MS = 600000;
-
 	@FXML
 	private TabPane rssTabPane;
 	@FXML
@@ -50,18 +45,19 @@ public class MainController extends AbstractController {
 	private final Map<String, IRssChannel> rssChannels = new ConcurrentHashMap<>();
 	private final Map<String, IRssItem> rssItems = new ConcurrentHashMap<>();
 	private final Map<String, List<String>> rssChannelMappings = new ConcurrentHashMap<>();
-	private IDashboardLayout dashboardLayout;
-
 	private final Map<String, RssChannelController> rssChannelControllers = new ConcurrentHashMap<>();
-	private final Map<String, RssItemController> rssItemControllers = new ConcurrentHashMap<>();
-	private final Timer cacheTimer = new Timer();
 
-	private INetworkClient networkClient;
+	private IAuthenticatedNetworkClient networkClient;
+	private HostServices hostServices;
 	private String token;
 	private boolean promptLogin = false;
 
 	public void setNetworkClient(INetworkClient networkClient) {
 		this.networkClient = networkClient;
+	}
+
+	public void setHostServices(HostServices hostServices) {
+		this.hostServices = hostServices;
 	}
 
 	public void setToken(String token) {
@@ -71,6 +67,8 @@ public class MainController extends AbstractController {
 	public boolean doPromptLogin() {
 		return promptLogin;
 	}
+
+	// Base
 
 	private CompletableFuture<IRssChannel> loadRssChannelAsync(String rssChannelId) {
 		return networkClient.getRssChannel(token, rssChannelId)
@@ -98,12 +96,8 @@ public class MainController extends AbstractController {
 				});
 	}
 
-	private CompletableFuture<IDashboardLayout> loadDashboardLayoutAsync() {
-		return networkClient.getDashboardLayout(token)
-				.thenApplyAsync(dashboardLayout -> {
-					this.dashboardLayout = dashboardLayout;
-					return dashboardLayout;
-				})
+	private CompletableFuture<IDashboard> loadDashboardAsync() {
+		return networkClient.getDashboard(token)
 				.exceptionally(ex -> {
 					Alerts.showServerUnavailableAlert();
 					close(true);
@@ -124,52 +118,61 @@ public class MainController extends AbstractController {
 				});
 	}
 
-	private void close(boolean promptLogin) {
-		this.promptLogin = promptLogin;
-		Stage stage = (Stage) rootPane.getScene().getWindow();
-		stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+	private CompletableFuture<Void> saveDashboardModificationAsync(int page, int row, int column, String url) {
+		return networkClient
+				.modifyDashboardLayout(token, page, row, column, url)
+				.exceptionally(ex -> {
+					Alerts.showServerUnavailableAlert();
+					close(true);
+					return null;
+				});
 	}
 
-	private void invalidateCaches() {
-		rssChannels.clear();
-		rssItems.clear();
-	}
+	// Render
 
-	private void setupCacheTimer() {
-		cacheTimer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				invalidateCaches();
-			}
-		}, 0, CACHE_TIMER_PERIOD_MS);
-	}
+	private void renderCategories() {
+		categoryTreeView.setRoot(new TreeItem<String>("Categories"));
+		rssChannelMappings.values().forEach(rssItemIds -> {
+			rssItemIds.stream().map(rssItems::get).forEach(rssItem -> {
+				List<String> categories = rssItem.getCategories();
+				TreeItem<String> item = categoryTreeView.getRoot();
 
-	private void renderCategories(String rssItemId) {
-		List<String> categories = rssItems.get(rssItemId).getCategories();
+				while (!categories.isEmpty()) {
+					TreeItem<String> nextItem = null;
+					for (TreeItem<String> childItem : item.getChildren()) {
+						if (childItem.getValue().equals(categories.get(0))) {
+							nextItem = childItem;
+							break;
+						}
+					}
 
-		TreeItem<String> item = new TreeItem<String>("Categories");
-		categoryTreeView.setRoot(item);
+					if (nextItem == null) {
+						String category = categories.get(0);
+						nextItem = new TreeItem<>(categories.get(0));
 
-		while (!categories.isEmpty()) {
-			TreeItem<String> nextItem = null;
-			for (TreeItem<String> childItem : item.getChildren()) {
-				if (childItem.getValue().equals(categories.get(0))) {
-					nextItem = childItem;
-					break;
+						int index = 0;
+						List<TreeItem<String>> children = item.getChildren();
+						for (; index < children.size(); index++) {
+							if (children.get(index).getValue().compareTo(category) > 0) {
+								break;
+							}
+						}
+
+						if (index == children.size()) {
+							item.getChildren().add(nextItem);
+						} else {
+							item.getChildren().set(index, nextItem);
+						}
+					}
+
+					item = nextItem;
+					categories = categories.subList(1, categories.size());
 				}
-			}
-
-			if (nextItem == null) {
-				nextItem = new TreeItem<>(categories.get(0));
-				item.getChildren().add(nextItem);
-			}
-
-			item = nextItem;
-			categories = categories.subList(1, categories.size());
-		}
+			});
+		});
 	}
 
-	private void renderRssChannel(String rssChannelId, IDashboardElement dashboardElement) {
+	private void renderRssChannel(int pageId, int rowId, int columnId, String rssChannelId) {
 		IRssChannel rssChannel = rssChannels.get(rssChannelId);
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RssChannelView.fxml"));
 
@@ -181,41 +184,84 @@ public class MainController extends AbstractController {
 			throw new RuntimeException(e);
 		}
 
+		Tab rssTab = rssTabPane.getTabs().get(pageId);
+		GridPane rssGridPane = (GridPane) rssTab.getContent();
+		rssGridPane.add(pane, columnId, rowId);
+
 		RssChannelController controller = loader.getController();
 		rssChannelControllers.put(rssChannel.getId(), controller);
-		controller.setRssChannel(rssChannel);
+		controller.setDeleteCallback(() -> {
+			rssGridPane.getChildren().remove(pane);
+			renderEmptyRssChannel(pageId, rowId, columnId);
 
-		Tab rssTab = rssTabPane.getTabs().get(dashboardElement.getPage());
-		GridPane rssGridPane = (GridPane) rssTab.getContent();
-		rssGridPane.add(pane,
-				dashboardElement.getX(), dashboardElement.getY(), dashboardElement.getW(), dashboardElement.getH());
+			rssChannels.remove(rssChannelId);
+			rssChannelControllers.remove(rssChannelId);
+			rssChannelMappings.remove(rssChannelId);
+
+			queueTask(saveDashboardModificationAsync(pageId, rowId, columnId, null)
+					.thenRunAsync(this::renderCategories, Platform::runLater));
+		});
+		controller.setHostServices(hostServices);
+		controller.setRssChannel(rssChannel);
 	}
 
-	private void renderLayout(IDashboardLayout dashboardLayout) {
-		List<Map<String, IDashboardElement>> layout = splitDashboardLayout(dashboardLayout);
+	private void renderEmptyRssChannel(int pageId, int rowId, int columnId) {
+		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EmptyRssChannelView.fxml"));
 
-		for (int i = 0; i < layout.size(); i++) {
-			Tab rssTab = new Tab("Page" + (i + 1));
+		Pane pane;
+		try {
+			pane = loader.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+
+		EmptyRssChannelController controller = loader.getController();
+		controller.setAddCallback(() -> {
+			queueTask(saveDashboardModificationAsync(pageId, rowId, columnId, controller.getUrl())
+					.thenComposeAsync(any -> {
+						return loadDashboardAsync();
+					})
+					.thenComposeAsync(dashboard -> {
+						return loadRssChannelAndItemsAsync(pageId, rowId, columnId,
+								dashboard.getLayout().get(pageId)[rowId][columnId]);
+					})
+					.thenRunAsync(this::renderCategories, Platform::runLater));
+		});
+
+		Tab rssTab = rssTabPane.getTabs().get(pageId);
+		GridPane rssGridPane = (GridPane) rssTab.getContent();
+		rssGridPane.add(pane, columnId, rowId);
+	}
+
+	private void renderDashboard(IDashboard dashboard) {
+		List<String[][]> dashboardLayout = dashboard.getLayout();
+		int rowCount = dashboardLayout.get(0).length;
+		int columnCount = dashboardLayout.get(0)[0].length;
+
+		for (int rowId = 0; rowId < dashboardLayout.size(); rowId++) {
+			Tab rssTab = new Tab("" + (rowId + 1));
 			rssTab.setClosable(false);
 			rssTabPane.getTabs().add(rssTab);
 
 			GridPane rssGridPane = new GridPane();
-			List<ColumnConstraints> columnConstraints = new ArrayList<>();
-			for (int j = 0; j < 100; j++) {
-				ColumnConstraints constraint = new ColumnConstraints();
-				constraint.setPercentWidth(1);
-				columnConstraints.add(constraint);
-			}
+			rssGridPane.setGridLinesVisible(true);
 
-			rssGridPane.getColumnConstraints().addAll(columnConstraints);
 			List<RowConstraints> rowConstraints = new ArrayList<>();
-			for (int j = 0; j < 100; j++) {
+			for (int j = 0; j < rowCount; j++) {
 				RowConstraints constraint = new RowConstraints();
-				constraint.setPercentHeight(1);
+				constraint.setPercentHeight(100.0 / rowCount);
 				rowConstraints.add(constraint);
 			}
-
 			rssGridPane.getRowConstraints().addAll(rowConstraints);
+
+			List<ColumnConstraints> columnConstraints = new ArrayList<>();
+			for (int j = 0; j < columnCount; j++) {
+				ColumnConstraints constraint = new ColumnConstraints();
+				constraint.setPercentWidth(100.0 / columnCount);
+				columnConstraints.add(constraint);
+			}
+			rssGridPane.getColumnConstraints().addAll(columnConstraints);
 			rssTab.setContent(rssGridPane);
 		}
 	}
@@ -237,81 +283,72 @@ public class MainController extends AbstractController {
 						.collect(Collectors.toList()));
 	}
 
-	public void shutdown() {
-		cacheTimer.cancel();
-	}
+	// Derived
 
-	private List<Map<String, IDashboardElement>> splitDashboardLayout(IDashboardLayout dashboardLayout) {
-		int size = -1;
-		for (IDashboardElement dashboardElement : dashboardLayout.getLayout()) {
-			size = Math.max(size, dashboardElement.getPage() + 1);
-		}
-
-		List<Map<String, IDashboardElement>> splitLayout = new ArrayList<>();
-		for (int i = 0; i < size; i++) {
-			splitLayout.add(null);
-		}
-
-		for (IDashboardElement dashboardElement : dashboardLayout.getLayout()) {
-			int page = dashboardElement.getPage();
-			Map<String, IDashboardElement> pageLayout = splitLayout.get(page);
-			if (pageLayout == null) {
-				pageLayout = new HashMap<>();
-				splitLayout.set(page, pageLayout);
-			}
-
-			pageLayout.put(dashboardElement.getChannelId(), dashboardElement);
-		}
-
-		return splitLayout;
+	private CompletableFuture<Void> loadRssChannelAndItemsAsync(int pageId, int rowId, int columnId,
+			String rssChannelId) {
+		return loadRssChannelAsync(rssChannelId)
+				.thenApplyAsync(rssChannel -> {
+					renderRssChannel(pageId, rowId, columnId, rssChannelId);
+					return rssChannel;
+				}, Platform::runLater)
+				.thenComposeAsync(rssChannel -> {
+					return loadRssChannelMappingAsync(rssChannelId).thenComposeAsync(rssChannelMapping -> {
+						return CompletableFuture.allOf(rssChannelMapping.getRssItemIds()
+								.stream()
+								.map(rssItemId -> {
+									return loadRssItemAsync(rssItemId);
+								})
+								.collect(Collectors.toList())
+								.toArray(new CompletableFuture<?>[0]))
+								.thenRunAsync(() -> {
+									renderMapping(rssChannelId, new ArrayList<>(), new ArrayList<>());
+								}, Platform::runLater);
+					});
+				})
+				.thenRunAsync(this::renderCategories, Platform::runLater);
 	}
 
 	public void load() {
-		setupCacheTimer();
-
-		queueTask(loadDashboardLayoutAsync().thenApplyAsync(dashboardLayout -> {
-			renderLayout(dashboardLayout);
-			return dashboardLayout;
-		}, Platform::runLater).thenComposeAsync(dashboardLayout -> {
+		queueTask(loadDashboardAsync().thenApplyAsync(dashboard -> {
+			renderDashboard(dashboard);
+			return dashboard;
+		}, Platform::runLater).thenComposeAsync(dashboard -> {
 			List<CompletableFuture<?>> futures = new ArrayList<>();
 
-			List<Map<String, IDashboardElement>> layout = splitDashboardLayout(dashboardLayout);
-			layout.forEach(page -> {
-				page.forEach((rssChannelId, dashboardElement) -> {
-					futures.add(loadRssChannelAsync(rssChannelId).thenComposeAsync(rssChannel -> {
-						renderRssChannel(rssChannelId, dashboardElement);
-						return loadRssChannelMappingAsync(rssChannelId).thenComposeAsync(rssChannelMapping -> {
-							return CompletableFuture.allOf(rssChannelMapping.getRssItemIds()
-									.stream()
-									.map(rssItemId -> {
-										return loadRssItemAsync(rssItemId).thenRunAsync(() -> {
-											renderCategories(rssItemId);
-										}, Platform::runLater);
-									})
-									.collect(Collectors.toList())
-									.toArray(new CompletableFuture<?>[0]))
-									.thenRunAsync(() -> {
-										renderMapping(rssChannelId, new ArrayList<>(), new ArrayList<>());
-									}, Platform::runLater);
-						}, Platform::runLater);
-					}, Platform::runLater));
-				});
-			});
+			List<String[][]> dashboardLayout = dashboard.getLayout();
+			for (int pageId = 0; pageId < dashboardLayout.size(); pageId++) {
+				String[][] page = dashboardLayout.get(pageId);
+				for (int rowId = 0; rowId < page.length; rowId++) {
+					String[] row = page[rowId];
+					for (int columnId = 0; columnId < row.length; columnId++) {
+						String rssChannelId = row[columnId];
+						final int u = pageId;
+						final int v = rowId;
+						final int w = columnId;
+						futures.add(rssChannelId == null
+								? CompletableFuture.runAsync(() -> {
+									renderEmptyRssChannel(u, v, w);
+								}, Platform::runLater)
+								: loadRssChannelAndItemsAsync(u, v, w, rssChannelId));
+					}
+				}
+			}
 
 			return CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0]));
 		}));
 	}
 
-	@FXML
-	public void initialize() {
-		categoryTreeView.setShowRoot(false);
-		categoryTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-		categoryTreeView.getSelectionModel().selectedItemProperty().addListener(any -> {
-			applyFilter();
-		});
+	// Misc
+
+	private void close(boolean promptLogin) {
+		this.promptLogin = promptLogin;
+		close();
 	}
 
 	private void applyFilter() {
+		categoryTreeView.getSelectionModel().getSelectedItems().stream().collect(Collectors.toList());
+
 		rssChannels.keySet().forEach(rssChannelId -> {
 			renderMapping(
 					rssChannelId,
@@ -324,13 +361,15 @@ public class MainController extends AbstractController {
 	}
 
 	@FXML
+	public void initialize() {
+		categoryTreeView.setShowRoot(false);
+		categoryTreeView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+	}
+
+	@FXML
 	public void handleKeywordsKeyPressed(KeyEvent event) {
-		KeyCode code = event.getCode();
-		if (code == KeyCode.ENTER) {
-			applyFilter();
-		} else if (code == KeyCode.ESCAPE) {
+		if (event.getCode() == KeyCode.ESCAPE) {
 			keywordsTextField.clear();
-			applyFilter();
 		}
 	}
 
@@ -338,7 +377,11 @@ public class MainController extends AbstractController {
 	public void handleCategoriesKeyPressed(KeyEvent event) {
 		if (event.getCode() == KeyCode.ESCAPE) {
 			categoryTreeView.getSelectionModel().clearSelection();
-			applyFilter();
 		}
+	}
+
+	@FXML
+	public void handleFilterButtonPressed(ActionEvent event) {
+		applyFilter();
 	}
 }

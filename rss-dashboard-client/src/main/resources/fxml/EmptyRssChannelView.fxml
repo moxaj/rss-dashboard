@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="rootPane" alignment="CENTER" maxHeight="1.7976931348623157E308"
+	maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0"
+	prefHeight="282.0" prefWidth="449.0" xmlns="http://javafx.com/javafx/8.0.60"
+	xmlns:fx="http://javafx.com/fxml/1" fx:controller="rss_dashboard.client.controller.EmptyRssChannelController">
+	<children>
+		<Button fx:id="addButton" mnemonicParsing="false"
+			onAction="#handleAddButtonPressed" text="Add new RSS feed" />
+	</children>
+</VBox>
