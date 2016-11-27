@@ -9,3 +9,4 @@ To create and initialize the database for the application,
 	4.) wait while it is finishing its job (some seconds)
 	
 IMPORTANT: initDB.cmd must be run at its original location (see step 2)!
+IMPORTANT: JAVA_HOME's last character should be '\'.
