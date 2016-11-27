@@ -112,7 +112,7 @@ public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 		} finally {
 			try {
 				httpResponse.close();
-				httpClient.close();	
+				httpClient.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

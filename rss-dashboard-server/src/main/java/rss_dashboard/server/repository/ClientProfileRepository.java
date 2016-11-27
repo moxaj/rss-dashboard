@@ -21,28 +21,31 @@ public class ClientProfileRepository extends AbstractRepository implements IRepo
 			+ "token1 = ? OR " + "token2 = ?";
 
 	@Override
-	public void add(ClientProfile item) throws RepositoryException {
+	public String add(ClientProfile item) throws RepositoryException {
 		List<ClientProfile> helper = new ArrayList<>();
 		helper.add(item);
 
-		add(helper);
+		return add(helper).get(0);
 	}
 
 	@Override
-	public void add(Iterable<ClientProfile> items) throws RepositoryException {
+	public List<String> add(Iterable<ClientProfile> items) throws RepositoryException {
 		try {
 			connect();
 
+			List<String> returnIds = new ArrayList<>();
+			
 			for (ClientProfile item : items) {
 				PreparedStatement statement = prepareStatement(SQL_ADD);
 
+				String p1 = randomId();
 				String p2 = item.getEmail();
 				String p3 = item.getToken1();
 				LocalDateTime p4 = item.getExpiration();
 				String p5 = item.getToken2();
 				AuthorizationProviders p6 = item.getProvider();
 
-				statement.setString(1, randomId());
+				statement.setString(1, p1);
 				statement.setString(2, p2 != null ? p2 : "");
 				statement.setString(3, p3 != null ? p3 : "");
 				statement.setString(4, p4 != null ? p4.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : "");
@@ -50,7 +53,11 @@ public class ClientProfileRepository extends AbstractRepository implements IRepo
 				statement.setString(6, p6 != null ? p6.getText() : "");
 
 				statement.executeUpdate();
+				
+				returnIds.add(p1);
 			}
+			
+			return returnIds;
 		} catch (SQLException e) {
 			throw new RepositoryException(e.getMessage());
 		} finally {

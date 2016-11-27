@@ -14,7 +14,7 @@ import lombok.Setter;
 import rss_dashboard.common.model.rss.IRssChannelMapping;
 
 @XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @Getter
 @Setter
 @NoArgsConstructor

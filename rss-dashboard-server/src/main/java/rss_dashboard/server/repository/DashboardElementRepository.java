@@ -9,49 +9,52 @@ import java.util.List;
 import rss_dashboard.server.model.dashboard.DashboardElement;
 
 public class DashboardElementRepository extends AbstractRepository implements IRepository<DashboardElement> {
-	private String SQL_ADD = "INSERT INTO dashboard_elements " + "(id, x, y, w, h, page, client_id, rss_channel_id) "
-			+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-	private String SQL_UPDATE = "UPDATE dashboard_elements " + "SET x = ?, " + "y = ?, " + "w = ?, " + "h = ?, "
-			+ "page = ?, " + "client_id = ?, " + "rss_channel_id = ? " + "WHERE id = ?";
+	private String SQL_ADD = "INSERT INTO dashboard_elements " + "(id, row, column, page, client_id, rss_channel_id) "
+			+ "VALUES (?, ?, ?, ?, ?, ?)";
+	private String SQL_UPDATE = "UPDATE dashboard_elements " + "SET row = ?, " + "column = ?, " + "page = ?, "
+			+ "client_id = ?, " + "rss_channel_id = ? " + "WHERE id = ?";
 	private String SQL_DELETE = "DELETE FROM dashboard_elements " + "WHERE id = ?";
 	private String SQL_SELECT = "SELECT * " + "FROM dashboard_elements " + "WHERE id = ? OR " + "client_id = ? OR "
-			+ "rss_channel_id = ?";
+			+ "rss_channel_id = ? ORDER BY page ASC";
 
 	@Override
-	public void add(DashboardElement item) throws RepositoryException {
+	public String add(DashboardElement item) throws RepositoryException {
 		List<DashboardElement> helper = new ArrayList<>();
 		helper.add(item);
 
-		add(helper);
+		return add(helper).get(0);
 	}
 
 	@Override
-	public void add(Iterable<DashboardElement> items) throws RepositoryException {
+	public List<String> add(Iterable<DashboardElement> items) throws RepositoryException {
 		try {
 			connect();
+			
+			List<String> returnIds = new ArrayList<>();
 
 			for (DashboardElement item : items) {
 				PreparedStatement statement = prepareStatement(SQL_ADD);
 
-				int p2 = item.getX();
-				int p3 = item.getY();
-				int p4 = item.getW();
-				int p5 = item.getH();
-				int p6 = item.getPage();
-				String p7 = item.getClientId();
-				String p8 = item.getChannelId();
+				String p1 = randomId();
+				int p2 = item.getRow();
+				int p3 = item.getColumn();
+				int p4 = item.getPage();
+				String p5 = item.getClientId();
+				String p6 = item.getChannelId();
 
-				statement.setString(1, randomId());
+				statement.setString(1, p1);
 				statement.setInt(2, p2);
 				statement.setInt(3, p3);
 				statement.setInt(4, p4);
-				statement.setInt(5, p5);
-				statement.setInt(6, p6);
-				statement.setString(7, p7 != null ? p7 : "");
-				statement.setString(8, p8 != null ? p8 : "");
+				statement.setString(5, p5 != null ? p5 : "");
+				statement.setString(6, p6 != null ? p6 : "");
 
 				statement.executeUpdate();
+				
+				returnIds.add(p1);
 			}
+			
+			return returnIds;
 		} catch (SQLException e) {
 			throw new RepositoryException(e.getMessage());
 		} finally {
@@ -79,27 +82,23 @@ public class DashboardElementRepository extends AbstractRepository implements IR
 			for (DashboardElement item : items) {
 				PreparedStatement statement = prepareStatement(SQL_UPDATE);
 
-				int p1 = item.getX();
-				int p2 = item.getY();
-				int p3 = item.getW();
-				int p4 = item.getH();
-				int p5 = item.getPage();
-				String p6 = item.getClientId();
-				String p7 = item.getChannelId();
-				String p8 = item.getId();
+				int p1 = item.getRow();
+				int p2 = item.getColumn();
+				int p3 = item.getPage();
+				String p4 = item.getClientId();
+				String p5 = item.getChannelId();
+				String p6 = item.getId();
 
-				if (p8 == null || p8.isEmpty()) {
+				if (p6 == null || p6.isEmpty()) {
 					throw new RepositoryException("Id is null or empty.");
 				}
 
 				statement.setInt(1, p1);
 				statement.setInt(2, p2);
 				statement.setInt(3, p3);
-				statement.setInt(4, p4);
-				statement.setInt(5, p5);
-				statement.setString(6, p6 != null ? p6 : "");
-				statement.setString(7, p7 != null ? p7 : "");
-				statement.setString(8, p8);
+				statement.setString(4, p4 != null ? p4 : "");
+				statement.setString(5, p5 != null ? p5 : "");
+				statement.setString(6, p6);
 
 				statement.executeUpdate();
 			}
@@ -166,8 +165,8 @@ public class DashboardElementRepository extends AbstractRepository implements IR
 
 			while (results.next()) {
 				DashboardElement dashboardElement = DashboardElement.builder().id(results.getString(1))
-						.x(results.getInt(2)).y(results.getInt(3)).w(results.getInt(4)).h(results.getInt(5))
-						.page(results.getInt(6)).clientId(results.getString(7)).channelId(results.getString(8)).build();
+						.row(results.getInt(2)).column(results.getInt(3)).page(results.getInt(4))
+						.clientId(results.getString(5)).channelId(results.getString(6)).build();
 
 				typedResults.add(dashboardElement);
 			}
