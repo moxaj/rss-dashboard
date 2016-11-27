@@ -3,6 +3,7 @@ package rss_dashboard.client.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
@@ -29,8 +30,8 @@ import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import rss_dashboard.client.network.INetworkClient;
-import rss_dashboard.common.model.dashboard.IDashboard;
-import rss_dashboard.common.model.dashboard.Position;
+import rss_dashboard.common.model.dashboard.IDashboardElement;
+import rss_dashboard.common.model.dashboard.IDashboardLayout;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssChannelMapping;
 import rss_dashboard.common.model.rss.IRssItem;
@@ -49,7 +50,7 @@ public class MainController extends AbstractController {
 	private final Map<String, IRssChannel> rssChannels = new ConcurrentHashMap<>();
 	private final Map<String, IRssItem> rssItems = new ConcurrentHashMap<>();
 	private final Map<String, List<String>> rssChannelMappings = new ConcurrentHashMap<>();
-	private IDashboard dashboard;
+	private IDashboardLayout dashboardLayout;
 
 	private final Map<String, RssChannelController> rssChannelControllers = new ConcurrentHashMap<>();
 	private final Map<String, RssItemController> rssItemControllers = new ConcurrentHashMap<>();
@@ -97,11 +98,11 @@ public class MainController extends AbstractController {
 				});
 	}
 
-	private CompletableFuture<IDashboard> loadDashboardAsync() {
-		return networkClient.getDashboard(token)
-				.thenApplyAsync(dashboard -> {
-					this.dashboard = dashboard;
-					return dashboard;
+	private CompletableFuture<IDashboardLayout> loadDashboardLayoutAsync() {
+		return networkClient.getDashboardLayout(token)
+				.thenApplyAsync(dashboardLayout -> {
+					this.dashboardLayout = dashboardLayout;
+					return dashboardLayout;
 				})
 				.exceptionally(ex -> {
 					Alerts.showServerUnavailableAlert();
@@ -168,7 +169,7 @@ public class MainController extends AbstractController {
 		}
 	}
 
-	private void renderRssChannel(String rssChannelId, int page, Position position) {
+	private void renderRssChannel(String rssChannelId, IDashboardElement dashboardElement) {
 		IRssChannel rssChannel = rssChannels.get(rssChannelId);
 		FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/RssChannelView.fxml"));
 
@@ -184,33 +185,33 @@ public class MainController extends AbstractController {
 		rssChannelControllers.put(rssChannel.getId(), controller);
 		controller.setRssChannel(rssChannel);
 
-		Tab rssTab = rssTabPane.getTabs().get(page);
+		Tab rssTab = rssTabPane.getTabs().get(dashboardElement.getPage());
 		GridPane rssGridPane = (GridPane) rssTab.getContent();
-		rssGridPane.add(pane, position.left, position.top, position.width, position.height);
+		rssGridPane.add(pane,
+				dashboardElement.getX(), dashboardElement.getY(), dashboardElement.getW(), dashboardElement.getH());
 	}
 
-	private void renderLayout(IDashboard dashboard) {
-		int width = dashboard.getWidth();
-		int height = dashboard.getHeight();
+	private void renderLayout(IDashboardLayout dashboardLayout) {
+		List<Map<String, IDashboardElement>> layout = splitDashboardLayout(dashboardLayout);
 
-		for (int i = 0; i < dashboard.getLayout().size(); i++) {
+		for (int i = 0; i < layout.size(); i++) {
 			Tab rssTab = new Tab("Page" + (i + 1));
 			rssTab.setClosable(false);
 			rssTabPane.getTabs().add(rssTab);
 
 			GridPane rssGridPane = new GridPane();
 			List<ColumnConstraints> columnConstraints = new ArrayList<>();
-			for (int j = 0; j < width; j++) {
+			for (int j = 0; j < 100; j++) {
 				ColumnConstraints constraint = new ColumnConstraints();
-				constraint.setPercentWidth(100.0 / width);
+				constraint.setPercentWidth(1);
 				columnConstraints.add(constraint);
 			}
 
 			rssGridPane.getColumnConstraints().addAll(columnConstraints);
 			List<RowConstraints> rowConstraints = new ArrayList<>();
-			for (int j = 0; j < height; j++) {
+			for (int j = 0; j < 100; j++) {
 				RowConstraints constraint = new RowConstraints();
-				constraint.setPercentHeight(100.0 / height);
+				constraint.setPercentHeight(1);
 				rowConstraints.add(constraint);
 			}
 
@@ -240,21 +241,45 @@ public class MainController extends AbstractController {
 		cacheTimer.cancel();
 	}
 
+	private List<Map<String, IDashboardElement>> splitDashboardLayout(IDashboardLayout dashboardLayout) {
+		int size = -1;
+		for (IDashboardElement dashboardElement : dashboardLayout.getLayout()) {
+			size = Math.max(size, dashboardElement.getPage() + 1);
+		}
+
+		List<Map<String, IDashboardElement>> splitLayout = new ArrayList<>();
+		for (int i = 0; i < size; i++) {
+			splitLayout.add(null);
+		}
+
+		for (IDashboardElement dashboardElement : dashboardLayout.getLayout()) {
+			int page = dashboardElement.getPage();
+			Map<String, IDashboardElement> pageLayout = splitLayout.get(page);
+			if (pageLayout == null) {
+				pageLayout = new HashMap<>();
+				splitLayout.set(page, pageLayout);
+			}
+
+			pageLayout.put(dashboardElement.getChannelId(), dashboardElement);
+		}
+
+		return splitLayout;
+	}
+
 	public void load() {
 		setupCacheTimer();
 
-		runTask(loadDashboardAsync().thenApplyAsync(dashboard -> {
-			renderLayout(dashboard);
-			return dashboard;
-		}, Platform::runLater).thenComposeAsync(dashboard -> {
+		queueTask(loadDashboardLayoutAsync().thenApplyAsync(dashboardLayout -> {
+			renderLayout(dashboardLayout);
+			return dashboardLayout;
+		}, Platform::runLater).thenComposeAsync(dashboardLayout -> {
 			List<CompletableFuture<?>> futures = new ArrayList<>();
 
-			List<Map<String, Position>> layout = dashboard.getLayout();
-			for (int i = 0; i < layout.size(); i++) {
-				final int k = i;
-				layout.get(i).forEach((rssChannelId, position) -> {
+			List<Map<String, IDashboardElement>> layout = splitDashboardLayout(dashboardLayout);
+			layout.forEach(page -> {
+				page.forEach((rssChannelId, dashboardElement) -> {
 					futures.add(loadRssChannelAsync(rssChannelId).thenComposeAsync(rssChannel -> {
-						renderRssChannel(rssChannelId, k, position);
+						renderRssChannel(rssChannelId, dashboardElement);
 						return loadRssChannelMappingAsync(rssChannelId).thenComposeAsync(rssChannelMapping -> {
 							return CompletableFuture.allOf(rssChannelMapping.getRssItemIds()
 									.stream()
@@ -271,7 +296,7 @@ public class MainController extends AbstractController {
 						}, Platform::runLater);
 					}, Platform::runLater));
 				});
-			}
+			});
 
 			return CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0]));
 		}));

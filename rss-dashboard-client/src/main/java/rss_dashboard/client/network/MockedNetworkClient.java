@@ -4,17 +4,16 @@ import java.net.MalformedURLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-import rss_dashboard.client.model.dashboard.Dashboard;
+import rss_dashboard.client.model.dashboard.DashboardElement;
+import rss_dashboard.client.model.dashboard.DashboardLayout;
 import rss_dashboard.client.model.rss.RssChannel;
 import rss_dashboard.client.model.rss.RssChannelMapping;
 import rss_dashboard.client.model.rss.RssItem;
-import rss_dashboard.common.model.dashboard.IDashboard;
-import rss_dashboard.common.model.dashboard.Position;
+import rss_dashboard.common.model.dashboard.IDashboardElement;
+import rss_dashboard.common.model.dashboard.IDashboardLayout;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssChannelMapping;
 import rss_dashboard.common.model.rss.IRssItem;
@@ -103,17 +102,14 @@ public class MockedNetworkClient implements INetworkClient {
 	}
 
 	@Override
-	public CompletableFuture<IDashboard> getDashboard(String token) {
+	public CompletableFuture<IDashboardLayout> getDashboardLayout(String token) {
 		return CompletableFuture.supplyAsync(() -> {
 			sleep();
 
-			List<Map<String, Position>> layout = new ArrayList<>();
-			Map<String, Position> page = new HashMap<>();
-			page.put("1", new Position(0, 0, 50, 50));
-			page.put("2", new Position(50, 20, 50, 50));
-			layout.add(page);
-			// TODO
-			return Dashboard.builder().layout(layout).width(100).height(100).build();
+			List<IDashboardElement> layout = new ArrayList<>();
+			layout.add(DashboardElement.builder().page(0).x(0).y(0).w(30).h(30).channelId("1").build());
+			layout.add(DashboardElement.builder().page(1).x(10).y(10).w(50).h(50).channelId("2").build());
+			return DashboardLayout.builder().layout(layout).build();
 		});
 	}
 

@@ -16,7 +16,7 @@ public abstract class AbstractController {
 		rootPane.setDisable(disable);
 	}
 
-	protected synchronized void runTask(CompletableFuture<?> task) {
+	protected synchronized void queueTask(CompletableFuture<?> task) {
 		taskQueue = taskQueue
 				.thenRunAsync(() -> {
 					disableInputs(true);

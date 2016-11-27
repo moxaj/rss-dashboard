@@ -60,8 +60,12 @@ public class LoginController extends AbstractController {
 	}
 
 	private void login() {
-		runTask(networkClient
+		queueTask(networkClient
 				.login(emailTextField.getText(), passwordTextField.getText())
+				.thenAcceptAsync(token -> {
+					this.token = token;
+					close();
+				}, Platform::runLater)
 				.exceptionally(ex -> {
 					Throwable cause = ex.getCause();
 					if (cause instanceof HttpResponseException) {

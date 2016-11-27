@@ -17,11 +17,11 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.ObjectParser;
 
-import rss_dashboard.client.model.dashboard.Dashboard;
+import rss_dashboard.client.model.dashboard.DashboardLayout;
 import rss_dashboard.client.model.rss.RssChannel;
 import rss_dashboard.client.model.rss.RssChannelMapping;
 import rss_dashboard.client.model.rss.RssItem;
-import rss_dashboard.common.model.dashboard.IDashboard;
+import rss_dashboard.common.model.dashboard.IDashboardLayout;
 import rss_dashboard.common.model.rss.IRssChannel;
 import rss_dashboard.common.model.rss.IRssChannelMapping;
 import rss_dashboard.common.model.rss.IRssItem;
@@ -145,12 +145,12 @@ public class HttpClient implements INetworkClient {
 	}
 
 	@Override
-	public CompletableFuture<IDashboard> getDashboard(String token) {
+	public CompletableFuture<IDashboardLayout> getDashboardLayout(String token) {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(dashboardLayoutUrl);
 				request.getHeaders().setAuthorization(String.format("Basic %s", token));
-				return request.execute().parseAs(Dashboard.class);
+				return request.execute().parseAs(DashboardLayout.class);
 			} catch (Throwable e) {
 				throw new CompletionException(e);
 			}

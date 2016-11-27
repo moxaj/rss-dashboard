@@ -20,7 +20,7 @@ public class Client extends Application {
 	private final Properties properties;
 	private final INetworkClient networkClient;
 
-	public Client() {
+	public Client() {	
 		properties = new Properties();
 		try {
 			properties.load(new FileInputStream("src/main/resources/network.properties"));
