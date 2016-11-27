@@ -1,5 +1,7 @@
 package rss_dashboard.client.controller;
 
+import java.time.format.DateTimeFormatter;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -19,6 +21,6 @@ public class RssItemController {
 		titleLabel.setText(rssItem.getTitle());
 		hyperlink.setText(rssItem.getLink());
 		descriptionLabel.setText(rssItem.getDescription());
-		pubDateLabel.setText(rssItem.getPubDate());
+		pubDateLabel.setText(rssItem.getPubDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
 	}
 }

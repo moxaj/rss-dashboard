@@ -1,6 +1,7 @@
 package rss_dashboard.client.network;
 
 import java.net.MalformedURLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,7 +66,7 @@ public class MockedNetworkClient implements INetworkClient {
 					.title("Index.hu")
 					.description("very very index")
 					.categories(Arrays.asList(new String[] { "BULVÁR" }))
-					.pubDate("2016.12.01")
+					.pubDate(LocalDate.parse("2016-08-29"))
 					.link("www.index.hu")
 					.language("HU")
 					.imageUrl(null)
@@ -83,7 +84,7 @@ public class MockedNetworkClient implements INetworkClient {
 					.title("Afghan forces what what what bla bla")
 					.description("According to the blah blah, the forces of blublu blub lubblublu")
 					.categories(Arrays.asList(new String[] { "Közélet", "BuLVáR" }))
-					.pubDate("2016.08.29")
+					.pubDate(LocalDate.parse("2016-08-29"))
 					.link("www.itemlink.hu")
 					.author("item author")
 					.build();

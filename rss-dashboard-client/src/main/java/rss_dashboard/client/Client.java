@@ -98,6 +98,10 @@ public class Client extends Application {
 	}
 
 	public static void main(String[] args) {
-		launch(args);
+		try {
+			launch(args);
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 	}
 }

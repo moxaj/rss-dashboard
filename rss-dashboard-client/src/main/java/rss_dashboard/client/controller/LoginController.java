@@ -73,12 +73,8 @@ public class LoginController extends AbstractController {
 						}
 					}
 
-					Alerts.showServerUnavailableAlert();
 					return null;
-				}).thenAcceptAsync(token -> {
-					this.token = token;
-					close();
-				}, Platform::runLater));
+				}));
 	}
 
 	@FXML

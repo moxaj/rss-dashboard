@@ -18,19 +18,17 @@ public class Server {
 		try {
 			properties.load(new FileInputStream("src/main/resources/network.properties"));
 		} catch (Exception e) {
-			throw new RuntimeException("Could not load properties file!", e);
+			throw new RuntimeException("Could not load properties file.", e);
 		}
 
-		httpServer = GrizzlyHttpServerFactory.createHttpServer(
-				URI.create(properties.getProperty("baseUrl")),
-				new ResourceConfig().packages("rss_dashboard.server.network"),
-				false);
+		httpServer = GrizzlyHttpServerFactory.createHttpServer(URI.create(properties.getProperty("baseUrl")),
+				new ResourceConfig().packages("rss_dashboard.server.network"), false);
 	}
 
 	public void start() throws IOException {
 		httpServer.start();
-		System.out.println(String.format(
-				"Http server started. WADL available at %s/application.wadl", properties.getProperty("baseUrl")));
+		System.out.println(String.format("Http server started. WADL available at %s/application.wadl.",
+				properties.getProperty("baseUrl")));
 	}
 
 	public void stop() {

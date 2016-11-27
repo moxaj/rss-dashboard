@@ -1,5 +1,6 @@
 package rss_dashboard.client.model.rss;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.google.api.client.util.Key;
@@ -24,5 +25,5 @@ public class RssElement implements IRssElement {
 	@Key
 	private List<String> categories;
 	@Key
-	private String pubDate;
+	private LocalDate pubDate;
 }

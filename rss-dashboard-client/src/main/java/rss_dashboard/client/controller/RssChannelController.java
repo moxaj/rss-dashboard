@@ -1,6 +1,7 @@
 package rss_dashboard.client.controller;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javafx.fxml.FXML;
@@ -32,7 +33,7 @@ public class RssChannelController {
 		titleLabel.setText(rssChannel.getTitle());
 		hyperlink.setText(rssChannel.getLink());
 		descriptionLabel.setText(rssChannel.getDescription());
-		pubDateLabel.setText(rssChannel.getPubDate());
+		pubDateLabel.setText(rssChannel.getPubDate().format(DateTimeFormatter.ISO_LOCAL_DATE));
 		// image.setImage(new Image(rssChannel.getImageUrl(), true));
 	}
 

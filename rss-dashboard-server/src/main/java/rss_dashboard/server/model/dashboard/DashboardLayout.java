@@ -10,14 +10,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import rss_dashboard.common.model.dashboard.IDashboardElement;
 import rss_dashboard.common.model.dashboard.IDashboardLayout;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class DashboardLayout implements IDashboardLayout {
-	private List<String[][]> layout;
+	private List<IDashboardElement> layout;
 }

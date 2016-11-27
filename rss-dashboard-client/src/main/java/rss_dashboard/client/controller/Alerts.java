@@ -13,8 +13,7 @@ public class Alerts {
 	}
 
 	public static void showServerUnavailableAlert() {
-		showErrorAlert(
-				"Could not connect to the server!",
+		showErrorAlert("Could not connect to the server!",
 				"The server might be unavailable. Please try again at a later time.");
 	}
 }
