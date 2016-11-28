@@ -19,16 +19,15 @@ public class ClientProfile {
 	private String token1;
 	private LocalDateTime expiration;
 	private String token2;
+	private String token3;
 	private AuthorizationProviders provider;
 
 	public boolean isValid() {
-		/*return id != null && !id.isEmpty() && email != null && !email.isEmpty() && token1 != null && !token1.isEmpty()
-				&& expiration != null && provider != AuthorizationProviders.UNDEFINED;*/
-		return true;
+		return id != null && !id.isEmpty() && email != null && !email.isEmpty() && token1 != null && !token1.isEmpty()
+				&& expiration != null && provider != AuthorizationProviders.UNDEFINED;
 	}
 
 	public boolean isExpired() {
-		/*return expiration == null || expiration.isBefore(LocalDateTime.now());*/
-		return false;
+		return expiration == null || expiration.isBefore(LocalDateTime.now());
 	}
 }
