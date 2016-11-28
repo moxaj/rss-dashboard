@@ -18,6 +18,11 @@
 								<Font name="System Bold" size="14.0" />
 							</font>
 						</Label>
+						<Hyperlink fx:id="hyperlink" text="Hyperlink">
+							<font>
+								<Font name="System Italic" size="12.0" />
+							</font>
+						</Hyperlink>
 					</children>
 				</HBox>
 			</left>
@@ -25,11 +30,6 @@
 				<VBox alignment="CENTER_RIGHT">
 					<children>
 						<Label fx:id="pubDateLabel" text="Label" />
-						<Hyperlink fx:id="hyperlink" text="Hyperlink">
-							<font>
-								<Font name="System Italic" size="12.0" />
-							</font>
-						</Hyperlink>
 					</children>
 				</VBox>
 			</right>

@@ -5,7 +5,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 
 public class Alerts {
-	public static void showErrorAlert(String headerText, String contentText) {
+	public synchronized static void showErrorAlert(String headerText, String contentText) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setResizable(false);
 		alert.setHeaderText(headerText);
@@ -18,7 +18,7 @@ public class Alerts {
 				"The server might be unavailable. Please try again at a later time.");
 	}
 
-	public static boolean showConfirmationAlert(String headerText, String contentText) {
+	public synchronized static boolean showConfirmationAlert(String headerText, String contentText) {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setResizable(false);
 		alert.setHeaderText(headerText);
