@@ -6,6 +6,7 @@ CREATE TABLE clients(
 	token1 VARCHAR(128),
 	expiration TIMESTAMP,
 	token2 VARCHAR(128),
+	token3 VARCHAR(128),
 	provider VARCHAR(16));
 
 CREATE TABLE rss_channels(
