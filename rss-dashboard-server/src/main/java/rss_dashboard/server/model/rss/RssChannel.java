@@ -74,7 +74,11 @@ public class RssChannel extends RssElement implements IRssChannel {
 
 		try {
 			inputStream = new URL(getLink()).openConnection().getInputStream();
-			syndFeed = new SyndFeedInput().build(new InputSource(inputStream));
+			
+			InputSource inputSource = new InputSource(inputStream);
+			inputSource.setEncoding("UTF-8");
+
+			syndFeed = new SyndFeedInput().build(inputSource);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
