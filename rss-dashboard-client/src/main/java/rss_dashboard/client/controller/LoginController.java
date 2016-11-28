@@ -19,14 +19,16 @@ public class LoginController extends AbstractController {
 	@FXML
 	protected TextField emailTextField;
 	@FXML
-	protected Button authButton;
+	protected Button accessButton;
+	@FXML
+	protected Button connectButton;
 
 	private HostServices hostServices;
 	private String clientId;
 	private ILoginNetworkClient networkClient;
+	private String tempTokenPath;
 	private String tempToken;
 	private String token;
-	private boolean authorized;
 
 	public void setHostServices(HostServices hostServices) {
 		this.hostServices = hostServices;
@@ -40,54 +42,40 @@ public class LoginController extends AbstractController {
 		this.networkClient = networkClient;
 	}
 
-	public void setTempToken(String tempTokenPath) {
+	public void setTempTokenPath(String tempTokenPath) {
+		this.tempTokenPath = tempTokenPath;
+
 		File file = new File(tempTokenPath);
 		if (file.exists()) {
 			try {
 				tempToken = Files.readAllLines(Paths.get(tempTokenPath)).get(0);
-				authorized = true;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			tempToken = UUID.randomUUID().toString();
-			authorized = false;
-			try {
-				Files.write(Paths.get(tempTokenPath), Arrays.asList(new String[] { tempToken }));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-		updateAuthButton();
+		updateButtons();
 	}
 
 	public String getToken() {
 		return token;
 	}
 
-	private void updateAuthButton() {
-		authButton.setText(authorized ? "Login" : "Authorize");
+	private void updateButtons() {
+		accessButton.setText(tempToken == null ? "Authorize" : "Unauthorize");
+		connectButton.setDisable(tempToken == null);
 	}
 
 	@FXML
-	public void handleAuthButtonPressed(ActionEvent event) {
-		if (authorized) {
-			queueTask(networkClient.login(emailTextField.getText(), tempToken)
-					.thenAcceptAsync(token -> {
-						this.token = token;
-						close();
-					}, Platform::runLater)
-					.exceptionally(ex -> {
-						Platform.runLater(() -> {
-							Alerts.showServerUnavailableAlert();
-							authorized = false;
-							updateAuthButton();
-						});
+	public void handleAccessButtonPressed(ActionEvent event) {
+		if (tempToken == null) {
+			tempToken = UUID.randomUUID().toString();
+			try {
+				Files.write(Paths.get(tempTokenPath), tempToken.getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 
-						return null;
-					}));
-		} else {
 			String url = "https://accounts.google.com/o/oauth2/v2/auth"
 					+ "?scope=email%20profile"
 					+ "&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Frss-dashboard%2Fmisc%2Fgoogle%2Fregister"
@@ -96,8 +84,38 @@ public class LoginController extends AbstractController {
 					+ "&state=" + tempToken
 					+ "&login_hint=" + emailTextField.getText();
 			hostServices.showDocument(url);
-			authorized = true;
-			updateAuthButton();
+			updateButtons();
+		} else {
+			new File(tempTokenPath).delete();
+			tempToken = null;
+			updateButtons();
+
+			queueTask(networkClient.unauthorize(tempToken)
+					.exceptionally(ex -> {
+						Platform.runLater(() -> {
+							Alerts.showServerUnavailableAlert();
+							updateButtons();
+						});
+
+						return null;
+					}));
 		}
+	}
+
+	@FXML
+	public void handleConnectButtonPressed(ActionEvent event) {
+		queueTask(networkClient.login(emailTextField.getText(), tempToken)
+				.thenAcceptAsync(token -> {
+					this.token = token;
+					close();
+				}, Platform::runLater)
+				.exceptionally(ex -> {
+					Platform.runLater(() -> {
+						Alerts.showServerUnavailableAlert();
+						updateButtons();
+					});
+
+					return null;
+				}));
 	}
 }

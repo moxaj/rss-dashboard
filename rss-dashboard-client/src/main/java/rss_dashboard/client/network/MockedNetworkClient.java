@@ -39,7 +39,7 @@ public class MockedNetworkClient implements INetworkClient {
 	}
 
 	@Override
-	public CompletableFuture<Void> logout(String token) {
+	public CompletableFuture<Void> unauthorize(String token) {
 		return CompletableFuture.supplyAsync(() -> {
 			sleep();
 			return null;

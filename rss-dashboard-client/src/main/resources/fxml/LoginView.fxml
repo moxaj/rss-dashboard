@@ -5,18 +5,30 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<HBox fx:id="rootPane" alignment="CENTER" prefHeight="65.0"
-	prefWidth="361.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.60"
-	xmlns:fx="http://javafx.com/fxml/1" fx:controller="rss_dashboard.client.controller.LoginController">
-	<padding>
-		<Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-	</padding>
+
+<VBox prefHeight="80.0" prefWidth="320.0" spacing="10.0"
+	xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="rss_dashboard.client.controller.LoginController">
 	<children>
-		<Label text="E-mail" />
-		<TextField fx:id="emailTextField" prefHeight="25.0"
-			prefWidth="194.0" />
-		<Button fx:id="authButton" mnemonicParsing="false"
-			onAction="#handleAuthButtonPressed" text="Authorize" />
+		<HBox fx:id="rootPane" alignment="CENTER" spacing="10.0">
+			<children>
+				<Label text="E-mail" />
+				<TextField fx:id="emailTextField" prefHeight="25.0"
+					prefWidth="194.0" />
+			</children>
+		</HBox>
+		<HBox alignment="CENTER" spacing="10.0">
+			<children>
+				<Button fx:id="accessButton" mnemonicParsing="false"
+					onAction="#handleAccessButtonPressed" prefWidth="100.0" text="Unauthorize" />
+				<Button fx:id="connectButton" mnemonicParsing="false"
+					onAction="#handleConnectButtonPressed" prefWidth="100.0" text="Login" />
+			</children>
+		</HBox>
 	</children>
-</HBox>
+	<padding>
+		<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+	</padding>
+</VBox>
