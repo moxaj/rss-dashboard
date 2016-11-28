@@ -3,14 +3,11 @@ package rss_dashboard.server.model.rss;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -76,7 +73,6 @@ public class RssChannel extends RssElement implements IRssChannel {
 			inputStream = new URL(getLink()).openConnection().getInputStream();
 
 			InputSource inputSource = new InputSource(inputStream);
-			inputSource.setEncoding("UTF-8");
 
 			syndFeed = new SyndFeedInput().build(inputSource);
 		} catch (Exception e) {

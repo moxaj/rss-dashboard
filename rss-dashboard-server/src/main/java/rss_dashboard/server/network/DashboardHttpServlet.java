@@ -43,6 +43,8 @@ public class DashboardHttpServlet extends AbstractHttpServlet {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
+		
+		response.setCharacterEncoding("UTF-8");
 
 		// fetch dashboard element from the database
 		List<DashboardElement> dashboardElements;
