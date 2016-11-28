@@ -1,3 +1,5 @@
 /target/db/rss-dashboard
 /target/db/derby.log
-/target/
+/target
+/db/rss-dashboard
+derby.log
