@@ -2,6 +2,8 @@ package rss_dashboard.client.model.rss;
 
 import java.util.List;
 
+import com.google.api.client.util.Key;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,5 +15,6 @@ import rss_dashboard.common.model.rss.IRssChannelMapping;
 @AllArgsConstructor
 @Builder
 public class RssChannelMapping implements IRssChannelMapping {
+	@Key
 	private List<String> rssItemIds;
 }

@@ -147,6 +147,7 @@ public class MainController extends AbstractController {
 
 	private void renderCategories() {
 		categoryTreeView.setRoot(new TreeItem<String>("Categories"));
+
 		rssChannelMappings.values().forEach(rssItemIds -> {
 			rssItemIds.stream().map(rssItems::get).forEach(rssItem -> {
 				List<String> categories = rssItem.getCategories();
@@ -163,12 +164,13 @@ public class MainController extends AbstractController {
 
 					if (nextItem == null) {
 						String category = categories.get(0);
-						nextItem = new TreeItem<>(categories.get(0));
+						nextItem = new TreeItem<>(category);
 
 						int index = 0;
 						List<TreeItem<String>> children = item.getChildren();
 						for (; index < children.size(); index++) {
-							if (children.get(index).getValue().compareTo(category) > 0) {
+							if (children.get(index).getValue().toLowerCase()
+									.compareTo(category.toLowerCase()) > 0) {
 								break;
 							}
 						}
@@ -204,7 +206,7 @@ public class MainController extends AbstractController {
 		rssGridPane.add(pane, columnId, rowId);
 
 		RssChannelController controller = loader.getController();
-		rssChannelControllers.put(rssChannel.getId(), controller);
+		rssChannelControllers.put(rssChannelId, controller);
 		controller.setDeleteCallback(() -> {
 			rssGridPane.getChildren().remove(pane);
 			renderEmptyRssChannel(pageId, rowId, columnId);
@@ -289,9 +291,11 @@ public class MainController extends AbstractController {
 						.filter(rssItem -> {
 							return (categories.isEmpty()
 									|| categories.stream().anyMatch(category -> {
-										return rssItem.getCategories().stream().anyMatch(category::equalsIgnoreCase);
+										return rssItem.getCategories().stream()
+												.anyMatch(category::equalsIgnoreCase);
 									})) && (keywords.isEmpty() || keywords.stream().anyMatch(keyword -> {
-										return rssItem.getDescription().toLowerCase().contains(keyword.toLowerCase())
+										return rssItem.getDescription().toLowerCase()
+												.contains(keyword.toLowerCase())
 												|| rssItem.getTitle().toLowerCase().contains(keyword.toLowerCase());
 									}));
 						})

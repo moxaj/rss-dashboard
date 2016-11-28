@@ -41,7 +41,7 @@ public class HttpClient implements INetworkClient {
 			public void initialize(HttpRequest request) {
 				request.setParser(objectParser);
 				request.getHeaders().setAccept("application/json");
-				request.getHeaders().setContentType("application/json");
+				request.getHeaders().setContentType("application/json; charset=utf-8");
 				request.getHeaders().set("keepalive", true);
 			}
 		});
@@ -59,7 +59,7 @@ public class HttpClient implements INetworkClient {
 		miscLogoutUrl = new GenericUrl(new URL(baseUrlString + "/misc/logout"));
 		rssChannelUrl = new GenericUrl(new URL(baseUrlString + "/rss/channels"));
 		rssItemUrl = new GenericUrl(new URL(baseUrlString + "/rss/items"));
-		rssChannelMappingUrl = new GenericUrl(new URL(baseUrlString + "/rss/channel_mapping"));
+		rssChannelMappingUrl = new GenericUrl(new URL(baseUrlString + "/rss/mapping"));
 		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/layout"));
 	}
 

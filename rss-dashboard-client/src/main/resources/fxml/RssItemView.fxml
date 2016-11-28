@@ -7,9 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0"
-	xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
-	fx:controller="rss_dashboard.client.controller.RssItemController">
+<VBox minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rss_dashboard.client.controller.RssItemController">
 	<children>
 		<BorderPane>
 			<left>
@@ -17,7 +15,7 @@
 					<children>
 						<Label fx:id="titleLabel" text="Label" wrapText="true">
 							<font>
-								<Font name="System Bold" size="18.0" />
+								<Font name="System Bold" size="14.0" />
 							</font>
 						</Label>
 					</children>
@@ -36,6 +34,6 @@
 				</VBox>
 			</right>
 		</BorderPane>
-		<Label fx:id="descriptionLabel" text="Label" />
+		<Label fx:id="descriptionLabel" text="Label" wrapText="true" />
 	</children>
 </VBox>

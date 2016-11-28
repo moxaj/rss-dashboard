@@ -2,6 +2,7 @@ package rss_dashboard.client.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.application.HostServices;
 import javafx.event.ActionEvent;
@@ -45,7 +46,11 @@ public class RssChannelController {
 	public void setRssChannel(IRssChannel rssChannel) {
 		titleLabel.setText(rssChannel.getTitle());
 		hyperlink.setText(rssChannel.getLink());
-		descriptionLabel.setText(rssChannel.getDescription());
+
+		String description = rssChannel.getDescription();
+		descriptionLabel.setText(description == null || description.isEmpty()
+				? "No description given."
+				: description);
 	}
 
 	public void setRssItems(List<IRssItem> rssItems) {
