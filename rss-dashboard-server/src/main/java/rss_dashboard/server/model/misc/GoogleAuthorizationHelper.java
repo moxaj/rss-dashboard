@@ -42,8 +42,8 @@ public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 		try {
 			tokenResponse = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(),
 					JacksonFactory.getDefaultInstance(), "https://www.googleapis.com/oauth2/v4/token",
-					clientSecrets.getDetails().getClientId(), clientSecrets.getDetails().getClientSecret(), data1,
-					"http://localhost:8080/misc/google").execute();
+					clientSecrets.getDetails().getClientId(), clientSecrets.getDetails().getClientSecret(), data1, null)
+							.execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new AuthorizationException("Error during token exchange.");
