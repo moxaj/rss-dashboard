@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -46,9 +47,14 @@ public class RssChannel extends RssElement implements IRssChannel {
 		SyndFeed syndFeed = getFeed();
 		
 		List<SyndCategory> categories = syndFeed.getCategories();
+		
 		List<String> stringCategories = new ArrayList<>();
 
-		for (SyndCategory category : categories) {
+		ListIterator<SyndCategory> iterator = categories.listIterator(categories.size());
+		
+		while (iterator.hasPrevious()) {
+			SyndCategory category = iterator.previous();
+			
 			stringCategories.add(category.getName());
 		}
 
@@ -57,7 +63,7 @@ public class RssChannel extends RssElement implements IRssChannel {
 		setCategories(stringCategories);
 		setPubDate(syndFeed.getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		setLanguage(syndFeed.getLanguage());
-		setImageUrl(syndFeed.getImage().getUrl());
+		setImageUrl(syndFeed.getImage() != null ? syndFeed.getImage().getUrl() : null);
 		
 		return true;
 	}
@@ -68,7 +74,11 @@ public class RssChannel extends RssElement implements IRssChannel {
 
 		try {
 			inputStream = new URL(getLink()).openConnection().getInputStream();
-			syndFeed = new SyndFeedInput().build(new InputSource(inputStream));
+			
+			InputSource inputSource = new InputSource(inputStream);
+			inputSource.setEncoding("UTF-8");
+
+			syndFeed = new SyndFeedInput().build(inputSource);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
