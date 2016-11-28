@@ -16,7 +16,7 @@ CREATE TABLE rss_channels(
 CREATE TABLE dashboard_elements(
 	id VARCHAR(128) PRIMARY KEY,
 	row INT,
-	column INT,
+	col INT,
 	page INT,
 	client_id VARCHAR(128),
 	rss_channel_id VARCHAR(128));
