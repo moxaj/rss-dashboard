@@ -57,7 +57,7 @@ public class RssChannel extends RssElement implements IRssChannel {
 		setCategories(stringCategories);
 		setPubDate(syndFeed.getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		setLanguage(syndFeed.getLanguage());
-		setImageUrl(syndFeed.getImage().getUrl());
+		setImageUrl(syndFeed.getImage() != null ? syndFeed.getImage().getUrl() : null);
 		
 		return true;
 	}
