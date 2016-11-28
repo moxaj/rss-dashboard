@@ -30,8 +30,8 @@ import rss_dashboard.server.repository.RepositoryException;
 
 public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 	@Override
-	public String authorize(String data) throws AuthorizationException {
-		// expected: data = authCode
+	public void authorize(String data1, String data2) throws AuthorizationException {
+		// expected: data1 = authCode, data2 = client token
 
 		// load secrets
 		GoogleClientSecrets clientSecrets = loadSecrets();
@@ -42,7 +42,7 @@ public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 		try {
 			tokenResponse = new GoogleAuthorizationCodeTokenRequest(new NetHttpTransport(),
 					JacksonFactory.getDefaultInstance(), "https://www.googleapis.com/oauth2/v4/token",
-					clientSecrets.getDetails().getClientId(), clientSecrets.getDetails().getClientSecret(), data, "")
+					clientSecrets.getDetails().getClientId(), clientSecrets.getDetails().getClientSecret(), data1, "")
 							.execute();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -77,30 +77,53 @@ public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 				clientProfile.setToken1(aToken);
 				clientProfile.setExpiration(LocalDateTime.now().plusSeconds(expiration));
 				clientProfile.setToken2(rToken);
+				clientProfile.setToken3(data2);
 				clientProfile.setProvider(AuthorizationProviders.GOOGLE);
 
 				clientProfileRepository.update(clientProfile);
 			} else {
 				clientProfileRepository.add(ClientProfile.builder().email(payload.getEmail()).token1(aToken)
-						.expiration(LocalDateTime.now().plusSeconds(expiration)).token2(rToken)
+						.expiration(LocalDateTime.now().plusSeconds(expiration)).token2(rToken).token3(data2)
 						.provider(AuthorizationProviders.GOOGLE).build());
 			}
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 			throw new AuthorizationException("Error during server client persisting.");
 		}
-
-		return aToken;
 	}
 
 	@Override
 	public void deauthorize(String data) throws AuthorizationException {
-		// expected: data = access token
+		// expected: data = client token
+		
+		// delete access token from client in database
+		ClientProfile clientProfile = null;
+		
+		try {
+			ClientProfileRepository clientProfileRepository = new ClientProfileRepository();
 
+			List<ClientProfile> clientProfiles = clientProfileRepository
+					.query(ClientProfile.builder().token3(data).build());
+
+			if (clientProfiles.size() != 0) {
+				clientProfile = clientProfiles.get(0);
+
+				clientProfile.setToken1(null);
+				clientProfile.setToken2(null);
+				clientProfile.setToken3(null);
+				clientProfile.setExpiration(LocalDateTime.now());
+
+				clientProfileRepository.update(clientProfile);
+			}
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			throw new AuthorizationException("Error during server client persisting.");
+		}
+		
 		// send HTTP GET request to Google
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 
-		HttpGet httpGet = new HttpGet("https://accounts.google.com/o/oauth2/revoke?token=" + data);
+		HttpGet httpGet = new HttpGet("https://accounts.google.com/o/oauth2/revoke?token=" + clientProfile.getToken1());
 
 		CloseableHttpResponse httpResponse = null;
 
@@ -120,26 +143,6 @@ public class GoogleAuthorizationHelper implements IAuthorizationHelper {
 
 		if (httpResponse.getStatusLine().getStatusCode() != 200) {
 			throw new AuthorizationException("Not good (not 200) response code for token revoking.");
-		}
-
-		// delete access token from client in database
-		try {
-			ClientProfileRepository clientProfileRepository = new ClientProfileRepository();
-
-			List<ClientProfile> clientProfiles = clientProfileRepository
-					.query(ClientProfile.builder().token1(data).build());
-
-			if (clientProfiles.size() != 0) {
-				ClientProfile clientProfile = clientProfiles.get(0);
-
-				clientProfile.setToken1(null);
-				clientProfile.setExpiration(LocalDateTime.now());
-
-				clientProfileRepository.update(clientProfile);
-			}
-		} catch (RepositoryException e) {
-			e.printStackTrace();
-			throw new AuthorizationException("Error during server client persisting.");
 		}
 	}
 

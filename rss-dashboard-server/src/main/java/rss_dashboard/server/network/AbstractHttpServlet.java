@@ -29,7 +29,7 @@ public abstract class AbstractHttpServlet {
 	}
 
 	protected final ClientProfile getClientProfile() throws AuthorizationException {
-		/*String authorization = getBasicAuthorization();
+		String authorization = getBasicAuthorization();
 
 		// validate authorization field
 		String[] authorizationParts;
@@ -43,41 +43,39 @@ public abstract class AbstractHttpServlet {
 
 		// fetching client data
 		ClientProfile clientProfile = null;
-		
+
 		try {
 			ClientProfileRepository clientProfileRepository = new ClientProfileRepository();
 
 			List<ClientProfile> clientProfiles = clientProfileRepository
-					.query(ClientProfile.builder().token1(authorizationParts[1]).build());
-			
+					.query(ClientProfile.builder().token3(authorizationParts[1]).build());
+
 			if (clientProfiles.size() == 0) {
 				return null;
 			}
-			
+
 			clientProfile = clientProfiles.get(0);
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 			throw new AuthorizationException("Error during client data fetching.");
 		}
-		
+
 		// reauthorize if valid and expired
 		if (clientProfile.isExpired()) {
 			// provider-dependent helper instantiation
 			IAuthorizationHelper authorizationHelper;
-			
+
 			try {
 				authorizationHelper = createAuthorizationHelper(AuthorizationProviders.fromText(authorizationParts[0]));
-				
+
 				authorizationHelper.reauthorize(clientProfile);
 			} catch (AuthorizationException e) {
 				e.printStackTrace();
 				return null;
 			}
 		}
-		
-		return clientProfile;*/
-		
-		return ClientProfile.builder().id("DUMMYID").email("dummy@dummy.com").build();
+
+		return clientProfile;
 	}
 
 	protected String[] splitAuthorization(String authorization) throws AuthorizationException {
