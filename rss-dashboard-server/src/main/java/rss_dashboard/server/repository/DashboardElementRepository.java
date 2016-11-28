@@ -155,9 +155,9 @@ public class DashboardElementRepository extends AbstractRepository implements IR
 			String p2 = filter.getClientId();
 			String p3 = filter.getChannelId();
 
-			statement.setString(1, p1 != null ? p1 : "");
-			statement.setString(2, p2 != null ? p2 : "");
-			statement.setString(3, p3 != null ? p3 : "");
+			statement.setString(1, p1 != null ? p1 : "-");
+			statement.setString(2, p2 != null ? p2 : "-");
+			statement.setString(3, p3 != null ? p3 : "-");
 
 			ResultSet results = statement.executeQuery();
 

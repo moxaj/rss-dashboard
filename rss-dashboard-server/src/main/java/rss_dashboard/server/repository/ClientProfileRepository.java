@@ -164,11 +164,11 @@ public class ClientProfileRepository extends AbstractRepository implements IRepo
 			String p4 = filter.getToken2();
 			String p5 = filter.getToken3();
 
-			statement.setString(1, p1 != null ? p1 : "");
-			statement.setString(2, p2 != null ? p2 : "");
-			statement.setString(3, p3 != null ? p3 : "");
-			statement.setString(4, p4 != null ? p4 : "");
-			statement.setString(5, p5 != null ? p5 : "");
+			statement.setString(1, p1 != null ? p1 : "-");
+			statement.setString(2, p2 != null ? p2 : "-");
+			statement.setString(3, p3 != null ? p3 : "-");
+			statement.setString(4, p4 != null ? p4 : "-");
+			statement.setString(5, p5 != null ? p5 : "-");
 
 			ResultSet results = statement.executeQuery();
 

@@ -144,7 +144,7 @@ public class RssChannelRepository extends AbstractRepository implements IReposit
 
 			String p1 = filter.getId();
 
-			statement.setString(1, p1 != null ? p1 : "");
+			statement.setString(1, p1 != null ? p1 : "-");
 
 			ResultSet results = statement.executeQuery();
 
