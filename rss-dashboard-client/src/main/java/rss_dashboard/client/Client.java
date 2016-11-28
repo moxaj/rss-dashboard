@@ -46,6 +46,10 @@ public class Client extends Application {
 		}
 
 		LoginController controller = loader.getController();
+		controller.setHostServices(getHostServices());
+		controller.setTempToken("src/main/resources/temp_token.txt");
+		controller.setClientId("735803091947-iltksm3j007r2s8nobe8ah4rpnsc44l5.apps.googleusercontent.com");
+		controller.setNetworkClient(networkClient);
 
 		Stage loginStage = new Stage();
 		loginStage.setTitle("Sign in with Google credentials");
