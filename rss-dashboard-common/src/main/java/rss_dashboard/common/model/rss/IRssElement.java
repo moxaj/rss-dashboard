@@ -1,6 +1,5 @@
 package rss_dashboard.common.model.rss;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface IRssElement {
@@ -14,5 +13,5 @@ public interface IRssElement {
 
 	List<String> getCategories();
 
-	LocalDate getPubDate();
+	String getPubDate();
 }

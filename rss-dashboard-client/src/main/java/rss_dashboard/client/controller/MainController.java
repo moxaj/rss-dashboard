@@ -338,6 +338,10 @@ public class MainController extends AbstractController {
 					String[] row = page[rowId];
 					for (int columnId = 0; columnId < row.length; columnId++) {
 						String rssChannelId = row[columnId];
+						if (rssChannelId != null && rssChannelId.isEmpty()) {
+							rssChannelId = null;
+						}
+
 						final int u = pageId;
 						final int v = rowId;
 						final int w = columnId;
