@@ -50,7 +50,6 @@ public class Client extends Application {
 		Stage loginStage = new Stage();
 		loginStage.setTitle("Sign in with Google credentials");
 		loginStage.setResizable(false);
-		loginStage.initStyle(StageStyle.UTILITY);
 		loginStage.setScene(new Scene(pane));
 		loginStage.setOnCloseRequest(event -> {
 			String token = controller.getToken();

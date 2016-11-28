@@ -117,7 +117,7 @@ public class RssHttpServlet extends AbstractHttpServlet {
 					break;
 				}
 
-				List<SyndCategory> categories = syndFeed.getCategories();
+				List<SyndCategory> categories = entry.getCategories();
 				Collections.reverse(categories);
 
 				List<String> stringCategories = new ArrayList<>();

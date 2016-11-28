@@ -2,7 +2,6 @@ package rss_dashboard.client.controller;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javafx.application.HostServices;
 import javafx.event.ActionEvent;
@@ -10,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
@@ -20,8 +18,6 @@ import rss_dashboard.common.model.rss.IRssItem;
 public class RssChannelController {
 	@FXML
 	protected Label titleLabel;
-	@FXML
-	protected Hyperlink hyperlink;
 	@FXML
 	protected Label descriptionLabel;
 	@FXML
@@ -38,14 +34,10 @@ public class RssChannelController {
 
 	public void setHostServices(HostServices hostServices) {
 		this.hostServices = hostServices;
-		hyperlink.setOnAction(event -> {
-			hostServices.showDocument(hyperlink.getText());
-		});
 	}
 
 	public void setRssChannel(IRssChannel rssChannel) {
 		titleLabel.setText(rssChannel.getTitle());
-		hyperlink.setText(rssChannel.getLink());
 
 		String description = rssChannel.getDescription();
 		descriptionLabel.setText(description == null || description.isEmpty()

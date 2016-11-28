@@ -2,16 +2,13 @@
 
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <VBox minHeight="0.0" minWidth="0.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rss_dashboard.client.controller.RssItemController">
 	<children>
-		<BorderPane>
-			<left>
-				<HBox BorderPane.alignment="CENTER">
+				<HBox spacing="5.0">
 					<children>
 						<Label fx:id="titleLabel" text="Label" wrapText="true">
 							<font>
@@ -23,17 +20,9 @@
 								<Font name="System Italic" size="12.0" />
 							</font>
 						</Hyperlink>
-					</children>
-				</HBox>
-			</left>
-			<right>
-				<VBox alignment="CENTER_RIGHT">
-					<children>
 						<Label fx:id="pubDateLabel" text="Label" />
 					</children>
-				</VBox>
-			</right>
-		</BorderPane>
+				</HBox>
 		<Label fx:id="descriptionLabel" text="Label" wrapText="true" />
 	</children>
 </VBox>

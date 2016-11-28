@@ -158,7 +158,7 @@ public class MainController extends AbstractController {
 				while (!categories.isEmpty()) {
 					TreeItem<String> nextItem = null;
 					for (TreeItem<String> childItem : item.getChildren()) {
-						if (childItem.getValue().equals(categories.get(0))) {
+						if (childItem.getValue().equalsIgnoreCase(categories.get(0))) {
 							nextItem = childItem;
 							break;
 						}
@@ -178,9 +178,14 @@ public class MainController extends AbstractController {
 						}
 
 						if (index == children.size()) {
-							item.getChildren().add(nextItem);
+							children.add(nextItem);
 						} else {
-							item.getChildren().set(index, nextItem);
+							children.add(null);
+							for (int i = children.size() - 1; i > index; i--) {
+								children.set(i, children.get(i - 1));
+							}
+
+							children.set(index, nextItem);
 						}
 					}
 
