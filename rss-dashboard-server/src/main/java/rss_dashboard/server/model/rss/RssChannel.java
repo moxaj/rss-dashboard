@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -42,39 +44,37 @@ public class RssChannel extends RssElement implements IRssChannel {
 		this.language = language;
 		this.imageUrl = imageUrl;
 	}
-	
+
 	public boolean loadDetails() {
 		SyndFeed syndFeed = getFeed();
-		
+
 		List<SyndCategory> categories = syndFeed.getCategories();
-		
+		Collections.reverse(categories);
+
 		List<String> stringCategories = new ArrayList<>();
 
-		ListIterator<SyndCategory> iterator = categories.listIterator(categories.size());
-		
-		while (iterator.hasPrevious()) {
-			SyndCategory category = iterator.previous();
-			
+		for (SyndCategory category : categories) {
 			stringCategories.add(category.getName());
 		}
 
 		setTitle(syndFeed.getTitle());
 		setDescription(syndFeed.getDescription());
 		setCategories(stringCategories);
-		setPubDate(syndFeed.getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+		setPubDate(syndFeed.getPublishedDate().toInstant().atZone(ZoneId.systemDefault())
+				.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		setLanguage(syndFeed.getLanguage());
 		setImageUrl(syndFeed.getImage() != null ? syndFeed.getImage().getUrl() : null);
-		
+
 		return true;
 	}
-	
+
 	public SyndFeed getFeed() {
 		SyndFeed syndFeed = null;
 		InputStream inputStream = null;
 
 		try {
 			inputStream = new URL(getLink()).openConnection().getInputStream();
-			
+
 			InputSource inputSource = new InputSource(inputStream);
 			inputSource.setEncoding("UTF-8");
 
@@ -91,7 +91,7 @@ public class RssChannel extends RssElement implements IRssChannel {
 				}
 			}
 		}
-		
+
 		return syndFeed;
 	}
 }

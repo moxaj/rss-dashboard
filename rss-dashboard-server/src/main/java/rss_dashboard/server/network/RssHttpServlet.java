@@ -3,6 +3,7 @@ package rss_dashboard.server.network;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -114,14 +115,11 @@ public class RssHttpServlet extends AbstractHttpServlet {
 				}
 
 				List<SyndCategory> categories = syndFeed.getCategories();
-				
+				Collections.reverse(categories);
+
 				List<String> stringCategories = new ArrayList<>();
 
-				ListIterator<SyndCategory> iterator = categories.listIterator(categories.size());
-				
-				while (iterator.hasPrevious()) {
-					SyndCategory category = iterator.previous();
-					
+				for (SyndCategory category : categories) {
 					stringCategories.add(category.getName());
 				}
 
