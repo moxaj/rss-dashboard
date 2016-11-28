@@ -9,8 +9,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import javax.swing.plaf.synth.SynthScrollBarUI;
-
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;

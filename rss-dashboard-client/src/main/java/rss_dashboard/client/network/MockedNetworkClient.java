@@ -31,14 +31,6 @@ public class MockedNetworkClient implements INetworkClient {
 	}
 
 	@Override
-	public CompletableFuture<String> login(String username, String password) {
-		return CompletableFuture.supplyAsync(() -> {
-			sleep();
-			return "dummy_token";
-		}, EXECUTOR);
-	}
-
-	@Override
 	public CompletableFuture<Void> unauthorize(String token) {
 		return CompletableFuture.supplyAsync(() -> {
 			sleep();

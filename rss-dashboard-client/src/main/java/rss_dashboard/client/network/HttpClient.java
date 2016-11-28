@@ -47,7 +47,6 @@ public class HttpClient implements INetworkClient {
 		});
 	}
 
-	private final URL miscLoginUrl;
 	private final URL miscUnauthorizeUrl;
 	private final URL rssChannelUrl;
 	private final URL rssItemUrl;
@@ -55,26 +54,11 @@ public class HttpClient implements INetworkClient {
 	private final URL dashboardLayoutUrl;
 
 	public HttpClient(String baseUrlString) throws MalformedURLException {
-		miscLoginUrl = new URL(baseUrlString + "/misc/login");
-		miscUnauthorizeUrl = new URL(baseUrlString + "/misc/logout");
+		miscUnauthorizeUrl = new URL(baseUrlString + "/misc/google/unregister");
 		rssChannelUrl = new URL(baseUrlString + "/rss/channels");
 		rssItemUrl = new URL(baseUrlString + "/rss/items");
 		rssChannelMappingUrl = new URL(baseUrlString + "/rss/mapping");
 		dashboardLayoutUrl = new URL(baseUrlString + "/dashboard/layout");
-	}
-
-	@Override
-	public CompletableFuture<String> login(String email, String tempToken) {
-		return CompletableFuture.supplyAsync(() -> {
-			try {
-				HttpRequest request = HTTP_REQUEST_FACTORY.buildPostRequest(new GenericUrl(miscLoginUrl),
-						new EmptyContent());
-				request.getHeaders().setAuthorization(String.format("Basic %s;%s", email, tempToken));
-				return request.execute().parseAsString();
-			} catch (Throwable e) {
-				throw new CompletionException(e);
-			}
-		}, EXECUTOR);
 	}
 
 	@Override
@@ -83,7 +67,7 @@ public class HttpClient implements INetworkClient {
 			try {
 				HttpRequest request = HTTP_REQUEST_FACTORY.buildPostRequest(new GenericUrl(miscUnauthorizeUrl),
 						new EmptyContent());
-				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				request.getHeaders().setAuthorization(String.format("Basic google;%s", token));
 				request.execute();
 				return null;
 			} catch (Throwable e) {
@@ -99,7 +83,7 @@ public class HttpClient implements INetworkClient {
 				GenericUrl url = new GenericUrl(rssChannelUrl);
 				url.set("id", id);
 				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(url);
-				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				request.getHeaders().setAuthorization(String.format("Basic google;%s", token));
 				return request.execute().parseAs(RssChannel.class);
 			} catch (Throwable e) {
 				throw new CompletionException(e);
@@ -114,7 +98,7 @@ public class HttpClient implements INetworkClient {
 				GenericUrl url = new GenericUrl(rssItemUrl);
 				url.set("id", id);
 				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(url);
-				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				request.getHeaders().setAuthorization(String.format("Basic google;%s", token));
 				return request.execute().parseAs(RssItem.class);
 			} catch (Throwable e) {
 				throw new CompletionException(e);
@@ -129,7 +113,7 @@ public class HttpClient implements INetworkClient {
 				GenericUrl url = new GenericUrl(rssChannelMappingUrl);
 				url.set("id", id);
 				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(url);
-				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				request.getHeaders().setAuthorization(String.format("Basic google;%s", token));
 				return request.execute().parseAs(RssChannelMapping.class);
 			} catch (Throwable e) {
 				throw new CompletionException(e);
@@ -142,7 +126,7 @@ public class HttpClient implements INetworkClient {
 		return CompletableFuture.supplyAsync(() -> {
 			try {
 				HttpRequest request = HTTP_REQUEST_FACTORY.buildGetRequest(new GenericUrl(dashboardLayoutUrl));
-				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				request.getHeaders().setAuthorization(String.format("Basic google;%s", token));
 				return request.execute().parseAs(Dashboard.class);
 			} catch (Throwable e) {
 				throw new CompletionException(e);
@@ -164,7 +148,7 @@ public class HttpClient implements INetworkClient {
 						feedUrl == null ? "DELETE" : "POST",
 						url,
 						new EmptyContent());
-				request.getHeaders().setAuthorization(String.format("Basic %s", token));
+				request.getHeaders().setAuthorization(String.format("Basic google;%s", token));
 				request.execute();
 				return null;
 			} catch (Throwable e) {

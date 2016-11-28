@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.UUID;
 
 import javafx.application.HostServices;
@@ -104,18 +103,7 @@ public class LoginController extends AbstractController {
 
 	@FXML
 	public void handleConnectButtonPressed(ActionEvent event) {
-		queueTask(networkClient.login(emailTextField.getText(), tempToken)
-				.thenAcceptAsync(token -> {
-					this.token = token;
-					close();
-				}, Platform::runLater)
-				.exceptionally(ex -> {
-					Platform.runLater(() -> {
-						Alerts.showServerUnavailableAlert();
-						updateButtons();
-					});
-
-					return null;
-				}));
+		this.token = tempToken;
+		close();
 	}
 }
