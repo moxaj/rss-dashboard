@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public class RssChannel extends RssElement implements IRssChannel {
 
 	@Builder
 	private RssChannel(String id, String title, String link, String description, List<String> categories,
-			LocalDate pubDate, String language, String imageUrl) {
+			String pubDate, String language, String imageUrl) {
 		super(id, title, link, description, categories, pubDate);
 		this.language = language;
 		this.imageUrl = imageUrl;
@@ -54,7 +55,7 @@ public class RssChannel extends RssElement implements IRssChannel {
 		setTitle(syndFeed.getTitle());
 		setDescription(syndFeed.getDescription());
 		setCategories(stringCategories);
-		setPubDate(syndFeed.getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
+		setPubDate(syndFeed.getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 		setLanguage(syndFeed.getLanguage());
 		setImageUrl(syndFeed.getImage().getUrl());
 		

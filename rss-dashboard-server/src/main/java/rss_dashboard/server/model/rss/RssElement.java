@@ -25,5 +25,5 @@ public abstract class RssElement implements IRssElement {
 	private String link;
 	private String description;
 	private List<String> categories;
-	private LocalDate pubDate;
+	private String pubDate;
 }

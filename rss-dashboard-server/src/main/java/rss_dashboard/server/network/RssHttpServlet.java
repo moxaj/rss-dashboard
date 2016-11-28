@@ -1,6 +1,7 @@
 package rss_dashboard.server.network;
 
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,12 +106,12 @@ public class RssHttpServlet extends AbstractHttpServlet {
 			List<RssItem> rssItems = new ArrayList<>();
 
 			int i = 0;
-			
+
 			for (SyndEntry entry : entries) {
 				if (i > 30) {
 					break;
 				}
-				
+
 				List<SyndCategory> categories = entry.getCategories();
 				List<String> stringCategories = new ArrayList<>();
 
@@ -120,16 +121,17 @@ public class RssHttpServlet extends AbstractHttpServlet {
 
 				rssItems.add(RssItem.builder().title(entry.getTitle()).link(entry.getLink())
 						.description(entry.getDescription().getValue()).categories(stringCategories)
-						.pubDate(entry.getPublishedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate())
+						.pubDate(entry.getPublishedDate().toInstant().atZone(ZoneId.systemDefault())
+								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 						.author(entry.getAuthor()).build());
-				
+
 				i++;
 			}
-			
+
 			RssItemRepository rssItemRepository = new RssItemRepository();
-			
+
 			List<String> ids = rssItemRepository.add(rssItems);
-			
+
 			return RssChannelMapping.builder().rssItemIds(ids).build();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
