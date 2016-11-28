@@ -22,11 +22,13 @@ public class ClientProfile {
 	private AuthorizationProviders provider;
 
 	public boolean isValid() {
-		return id != null && !id.isEmpty() && email != null && !email.isEmpty() && token1 != null && !token1.isEmpty()
-				&& expiration != null && provider != AuthorizationProviders.UNDEFINED;
+		/*return id != null && !id.isEmpty() && email != null && !email.isEmpty() && token1 != null && !token1.isEmpty()
+				&& expiration != null && provider != AuthorizationProviders.UNDEFINED;*/
+		return true;
 	}
 
 	public boolean isExpired() {
-		return expiration == null || expiration.isBefore(LocalDateTime.now());
+		/*return expiration == null || expiration.isBefore(LocalDateTime.now());*/
+		return false;
 	}
 }
