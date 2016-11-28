@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -46,9 +47,14 @@ public class RssChannel extends RssElement implements IRssChannel {
 		SyndFeed syndFeed = getFeed();
 		
 		List<SyndCategory> categories = syndFeed.getCategories();
+		
 		List<String> stringCategories = new ArrayList<>();
 
-		for (SyndCategory category : categories) {
+		ListIterator<SyndCategory> iterator = categories.listIterator(categories.size());
+		
+		while (iterator.hasPrevious()) {
+			SyndCategory category = iterator.previous();
+			
 			stringCategories.add(category.getName());
 		}
 

@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -112,10 +113,15 @@ public class RssHttpServlet extends AbstractHttpServlet {
 					break;
 				}
 
-				List<SyndCategory> categories = entry.getCategories();
+				List<SyndCategory> categories = syndFeed.getCategories();
+				
 				List<String> stringCategories = new ArrayList<>();
 
-				for (SyndCategory category : categories) {
+				ListIterator<SyndCategory> iterator = categories.listIterator(categories.size());
+				
+				while (iterator.hasPrevious()) {
+					SyndCategory category = iterator.previous();
+					
 					stringCategories.add(category.getName());
 				}
 
