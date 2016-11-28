@@ -9,9 +9,9 @@ import java.util.List;
 import rss_dashboard.server.model.dashboard.DashboardElement;
 
 public class DashboardElementRepository extends AbstractRepository implements IRepository<DashboardElement> {
-	private String SQL_ADD = "INSERT INTO dashboard_elements " + "(id, row, column, page, client_id, rss_channel_id) "
+	private String SQL_ADD = "INSERT INTO dashboard_elements " + "(id, row, col, page, client_id, rss_channel_id) "
 			+ "VALUES (?, ?, ?, ?, ?, ?)";
-	private String SQL_UPDATE = "UPDATE dashboard_elements " + "SET row = ?, " + "column = ?, " + "page = ?, "
+	private String SQL_UPDATE = "UPDATE dashboard_elements " + "SET row = ?, " + "col = ?, " + "page = ?, "
 			+ "client_id = ?, " + "rss_channel_id = ? " + "WHERE id = ?";
 	private String SQL_DELETE = "DELETE FROM dashboard_elements " + "WHERE id = ?";
 	private String SQL_SELECT = "SELECT * " + "FROM dashboard_elements " + "WHERE id = ? OR " + "client_id = ? OR "
