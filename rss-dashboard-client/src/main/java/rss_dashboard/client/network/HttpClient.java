@@ -60,7 +60,7 @@ public class HttpClient implements INetworkClient {
 		rssChannelUrl = new GenericUrl(new URL(baseUrlString + "/rss/channels"));
 		rssItemUrl = new GenericUrl(new URL(baseUrlString + "/rss/items"));
 		rssChannelMappingUrl = new GenericUrl(new URL(baseUrlString + "/rss/channel_mapping"));
-		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/dashboard"));
+		dashboardLayoutUrl = new GenericUrl(new URL(baseUrlString + "/dashboard/layout"));
 	}
 
 	@Override

@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import rss_dashboard.client.controller.Alerts;
 import rss_dashboard.client.controller.LoginController;
 import rss_dashboard.client.controller.MainController;
 import rss_dashboard.client.network.HttpClient;
