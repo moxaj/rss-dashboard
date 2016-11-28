@@ -12,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.derby.tools.sysinfo;
 import org.glassfish.grizzly.http.util.HttpStatus;
 
 import com.sun.syndication.feed.synd.SyndCategory;
@@ -50,7 +51,7 @@ public class RssHttpServlet extends AbstractHttpServlet {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
-		
+
 		response.setCharacterEncoding("UTF-8");
 
 		try {
@@ -87,7 +88,7 @@ public class RssHttpServlet extends AbstractHttpServlet {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
-		
+
 		response.setCharacterEncoding("UTF-8");
 
 		try {
@@ -117,7 +118,7 @@ public class RssHttpServlet extends AbstractHttpServlet {
 					break;
 				}
 
-				List<SyndCategory> categories = syndFeed.getCategories();
+				List<SyndCategory> categories = entry.getCategories();
 				Collections.reverse(categories);
 
 				List<String> stringCategories = new ArrayList<>();
@@ -127,9 +128,9 @@ public class RssHttpServlet extends AbstractHttpServlet {
 				}
 
 				rssItems.add(RssItem.builder().title(entry.getTitle()).link(entry.getLink())
-						.description(entry.getDescription().getValue()).categories(stringCategories)
-						.pubDate(entry.getPublishedDate().toInstant().atZone(ZoneId.systemDefault())
-								.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+						.description(entry.getDescription().getValue())
+						.categories(stringCategories).pubDate(entry.getPublishedDate().toInstant()
+								.atZone(ZoneId.systemDefault()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
 						.author(entry.getAuthor()).build());
 
 				i++;
@@ -165,7 +166,7 @@ public class RssHttpServlet extends AbstractHttpServlet {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
-		
+
 		response.setCharacterEncoding("UTF-8");
 
 		try {
