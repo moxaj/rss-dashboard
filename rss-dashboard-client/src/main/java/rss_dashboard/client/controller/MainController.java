@@ -77,8 +77,11 @@ public class MainController extends AbstractController {
 					return rssChannel;
 				})
 				.exceptionally(ex -> {
-					Alerts.showServerUnavailableAlert();
-					close(true);
+					Platform.runLater(() -> {
+						Alerts.showServerUnavailableAlert();
+						close(true);
+					});
+
 					return null;
 				});
 	}
@@ -90,8 +93,11 @@ public class MainController extends AbstractController {
 					return rssItem;
 				})
 				.exceptionally(ex -> {
-					Alerts.showServerUnavailableAlert();
-					close(true);
+					Platform.runLater(() -> {
+						Alerts.showServerUnavailableAlert();
+						close(true);
+					});
+
 					return null;
 				});
 	}
@@ -99,8 +105,11 @@ public class MainController extends AbstractController {
 	private CompletableFuture<IDashboard> loadDashboardAsync() {
 		return networkClient.getDashboard(token)
 				.exceptionally(ex -> {
-					Alerts.showServerUnavailableAlert();
-					close(true);
+					Platform.runLater(() -> {
+						Alerts.showServerUnavailableAlert();
+						close(true);
+					});
+
 					return null;
 				});
 	}
@@ -112,8 +121,11 @@ public class MainController extends AbstractController {
 					return rssChannelMapping;
 				})
 				.exceptionally(ex -> {
-					Alerts.showServerUnavailableAlert();
-					close(true);
+					Platform.runLater(() -> {
+						Alerts.showServerUnavailableAlert();
+						close(true);
+					});
+
 					return null;
 				});
 	}
@@ -122,8 +134,11 @@ public class MainController extends AbstractController {
 		return networkClient
 				.modifyDashboardLayout(token, page, row, column, url)
 				.exceptionally(ex -> {
-					Alerts.showServerUnavailableAlert();
-					close(true);
+					Platform.runLater(() -> {
+						Alerts.showServerUnavailableAlert();
+						close(true);
+					});
+
 					return null;
 				});
 	}

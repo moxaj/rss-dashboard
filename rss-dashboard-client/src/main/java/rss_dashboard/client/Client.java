@@ -14,8 +14,8 @@ import javafx.stage.StageStyle;
 import rss_dashboard.client.controller.Alerts;
 import rss_dashboard.client.controller.LoginController;
 import rss_dashboard.client.controller.MainController;
+import rss_dashboard.client.network.HttpClient;
 import rss_dashboard.client.network.INetworkClient;
-import rss_dashboard.client.network.MockedNetworkClient;
 
 public class Client extends Application {
 	private final Properties properties;
@@ -30,8 +30,7 @@ public class Client extends Application {
 		}
 
 		try {
-			networkClient = new MockedNetworkClient();
-			// new HttpClient(properties.getProperty("baseUrl"));
+			networkClient = new HttpClient(properties.getProperty("baseUrl"));
 		} catch (MalformedURLException e) {
 			throw new RuntimeException("Malformed server url!", e);
 		}
@@ -87,14 +86,10 @@ public class Client extends Application {
 		mainStage.centerOnScreen();
 		mainStage.initStyle(StageStyle.UNIFIED);
 		mainStage.setOnCloseRequest(event -> {
-			if (Alerts.showConfirmationAlert("Would you really like to close the application?", "")) {
-				if (controller.doPromptLogin()) {
-					showLoginScene();
-				} else {
-					networkClient.shutdown();
-				}
+			if (controller.doPromptLogin()) {
+				showLoginScene();
 			} else {
-				event.consume();
+				networkClient.shutdown();
 			}
 		});
 		mainStage.show();

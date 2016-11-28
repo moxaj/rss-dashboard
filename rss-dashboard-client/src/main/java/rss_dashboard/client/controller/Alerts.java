@@ -10,7 +10,7 @@ public class Alerts {
 		alert.setResizable(false);
 		alert.setHeaderText(headerText);
 		alert.setContentText(contentText);
-		alert.show();
+		alert.showAndWait();
 	}
 
 	public static void showServerUnavailableAlert() {
