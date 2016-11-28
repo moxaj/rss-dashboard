@@ -1,13 +1,15 @@
 package rss_dashboard.client.controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Properties;
 import java.util.UUID;
 
 import javafx.application.HostServices;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,16 +20,14 @@ public class LoginController extends AbstractController {
 	@FXML
 	protected TextField emailTextField;
 	@FXML
-	protected Button accessButton;
-	@FXML
-	protected Button connectButton;
+	protected Button loginButton;
 
 	private HostServices hostServices;
 	private String clientId;
 	private ILoginNetworkClient networkClient;
 	private String tempTokenPath;
+	private Properties tempTokenProperties;
 	private String tempToken;
-	private String token;
 
 	public void setHostServices(HostServices hostServices) {
 		this.hostServices = hostServices;
@@ -44,35 +44,31 @@ public class LoginController extends AbstractController {
 	public void setTempTokenPath(String tempTokenPath) {
 		this.tempTokenPath = tempTokenPath;
 
-		File file = new File(tempTokenPath);
-		if (file.exists()) {
-			try {
-				tempToken = Files.readAllLines(Paths.get(tempTokenPath)).get(0);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		tempTokenProperties = new Properties();
+		try {
+			tempTokenProperties.load(new FileInputStream(tempTokenPath));
+		} catch (Exception e) {
+			throw new RuntimeException("Could not load properties file!", e);
 		}
-
-		updateButtons();
 	}
 
 	public String getToken() {
-		return token;
-	}
-
-	private void updateButtons() {
-		accessButton.setText(tempToken == null ? "Authorize" : "Unauthorize");
-		connectButton.setDisable(tempToken == null);
+		return tempToken;
 	}
 
 	@FXML
-	public void handleAccessButtonPressed(ActionEvent event) {
+	public void handleLoginButtonPressed(ActionEvent event) {
+		String email = emailTextField.getText();
+		String emailHash = Integer.toString(email.hashCode());
+		tempToken = tempTokenProperties.getProperty(emailHash);
 		if (tempToken == null) {
 			tempToken = UUID.randomUUID().toString();
+			tempTokenProperties.setProperty(emailHash, tempToken);
+
 			try {
-				Files.write(Paths.get(tempTokenPath), tempToken.getBytes());
+				tempTokenProperties.store(new PrintWriter(tempTokenPath), "");
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new RuntimeException(e);
 			}
 
 			String url = "https://accounts.google.com/o/oauth2/v2/auth"
@@ -83,27 +79,21 @@ public class LoginController extends AbstractController {
 					+ "&state=" + tempToken
 					+ "&login_hint=" + emailTextField.getText();
 			hostServices.showDocument(url);
-			updateButtons();
 		} else {
-			new File(tempTokenPath).delete();
-			tempToken = null;
-			updateButtons();
-
-			queueTask(networkClient.unauthorize(tempToken)
-					.exceptionally(ex -> {
-						Platform.runLater(() -> {
-							Alerts.showServerUnavailableAlert();
-							updateButtons();
-						});
-
-						return null;
-					}));
+			close();
+			// new File(tempTokenPath).delete();
+			// tempToken = null;
+			// updateButtons();
+			//
+			// queueTask(networkClient.unauthorize(tempToken)
+			// .exceptionally(ex -> {
+			// Platform.runLater(() -> {
+			// Alerts.showServerUnavailableAlert();
+			// updateButtons();
+			// });
+			//
+			// return null;
+			// }));
 		}
-	}
-
-	@FXML
-	public void handleConnectButtonPressed(ActionEvent event) {
-		this.token = tempToken;
-		close();
 	}
 }

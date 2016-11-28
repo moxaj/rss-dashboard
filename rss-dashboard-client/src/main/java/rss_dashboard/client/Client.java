@@ -47,7 +47,7 @@ public class Client extends Application {
 
 		LoginController controller = loader.getController();
 		controller.setHostServices(getHostServices());
-		controller.setTempTokenPath("src/main/resources/temp_token.txt");
+		controller.setTempTokenPath("src/main/resources/temp_token.properties");
 		controller.setClientId("735803091947-pbhoclsf7khjampr4og36naiaqu5drs9.apps.googleusercontent.com");
 		controller.setNetworkClient(networkClient);
 
