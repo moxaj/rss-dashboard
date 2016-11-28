@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -51,6 +50,8 @@ public class RssHttpServlet extends AbstractHttpServlet {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
+		
+		response.setCharacterEncoding("UTF-8");
 
 		try {
 			List<RssChannel> results = new RssChannelRepository().query(RssChannel.builder().id(id).build());
@@ -86,6 +87,8 @@ public class RssHttpServlet extends AbstractHttpServlet {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
+		
+		response.setCharacterEncoding("UTF-8");
 
 		try {
 			List<RssChannel> rssChannelResults = new RssChannelRepository().query(RssChannel.builder().id(id).build());
@@ -162,6 +165,8 @@ public class RssHttpServlet extends AbstractHttpServlet {
 			response.setStatus(HttpStatus.UNAUTHORIZED_401);
 			return null;
 		}
+		
+		response.setCharacterEncoding("UTF-8");
 
 		try {
 			List<RssItem> results = new RssItemRepository().query(RssItem.builder().id(id).build());
