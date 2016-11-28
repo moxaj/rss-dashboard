@@ -10,7 +10,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="0.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rss_dashboard.client.controller.RssChannelController">
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+	minWidth="0.0" xmlns="http://javafx.com/javafx/8.0.60" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="rss_dashboard.client.controller.RssChannelController">
 	<children>
 		<BorderPane minWidth="0.0">
 			<left>
@@ -42,9 +44,12 @@
 				</HBox>
 			</left>
 			<right>
-				<VBox alignment="TOP_RIGHT" minWidth="0.0" BorderPane.alignment="CENTER">
+				<VBox alignment="TOP_RIGHT" minWidth="0.0"
+					BorderPane.alignment="CENTER">
 					<children>
-						<Button fx:id="deleteButton" mnemonicParsing="false" onAction="#handleDeleteButtonPressed" text="Delete" />
+						<Button fx:id="deleteButton" minWidth="-Infinity"
+							mnemonicParsing="false" onAction="#handleDeleteButtonPressed"
+							prefHeight="25.0" prefWidth="58.0" text="Delete" />
 					</children>
 					<padding>
 						<Insets right="10.0" top="10.0" />
